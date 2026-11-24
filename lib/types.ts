@@ -1,7 +1,18 @@
 type Base = { seconds: number };
 
 export type WeatherSlide = Base & { type: "weather"; place: string; lat: number; lon: number };
-export type DeparturesSlide = Base & { type: "departures"; stopId: string; stopName: string; max?: number };
+/** Én avgangstavle: én holdeplass, eventuelt filtrert på transportmiddel og retning */
+export type Board = {
+  title: string;
+  /** NSR:StopPlace:xxxx – finn den på https://stoppested.entur.org */
+  stopId: string;
+  /** Bare disse transportmidlene, f.eks. ["rail"], ["tram"], ["bus"] */
+  modes?: ("bus" | "tram" | "rail" | "metro" | "water" | "coach")[];
+  /** Bare avganger som senere stopper på en av disse holdeplassene (navn), f.eks. ["Nationaltheatret"] */
+  towards?: string[];
+  max?: number;
+};
+export type DeparturesSlide = Base & { type: "departures"; title?: string; boards: Board[] };
 export type CalendarSlide = Base & { type: "calendar"; title: string; days?: number };
 export type NewsSlide = Base & { type: "news"; title: string; feedUrl: string; sourceName: string };
 export type Ga4Slide = Base & { type: "ga4"; title: string };

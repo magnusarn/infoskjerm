@@ -29,26 +29,30 @@ export function demoData(slide: Slide): unknown {
       };
     case "departures":
       return {
-        stopName: slide.stopName,
-        departures: [
-          ["L1", "rail", "Lillehammer", 1, true],
-          ["4", "metro", "Vestli", 3, true],
-          ["31", "bus", "Fornebu", 4, true],
-          ["R10", "rail", "Drammen", 7, true],
-          ["FLY1", "rail", "Oslo lufthavn", 9, false],
-          ["13", "tram", "Bekkestua", 12, true],
-          ["2", "metro", "Østerås", 14, true],
-          ["37", "bus", "Nydalen", 22, false],
-        ].map(([line, mode, destination, min, rt], i) => ({
-          line,
-          mode,
-          destination,
-          aimed: iso((min as number) - (i === 2 ? 2 : 0)),
-          expected: iso(min as number),
-          realtime: rt,
-          cancelled: i === 5,
-          platform: String((i % 4) + 1),
-        })),
+        title: slide.title,
+        boards: slide.boards.map((b) => {
+          const mode = b.modes?.[0] ?? "bus";
+          const rows: [string, string][] =
+            mode === "rail"
+              ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE11", "Skien"], ["L1", "Lillestrøm"]]
+              : mode === "tram"
+                ? [["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"]]
+                : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"]];
+          return {
+            title: b.title,
+            stopName: b.stopId,
+            departures: rows.slice(0, b.max ?? 8).map(([line, destination], i) => ({
+              line,
+              mode,
+              destination,
+              aimed: iso(2 + i * 5),
+              expected: iso(2 + i * 5 + (i === 1 ? 2 : 0)),
+              realtime: i !== 4,
+              cancelled: false,
+              platform: String((i % 2) + 1),
+            })),
+          };
+        }),
       };
     case "calendar":
       return {

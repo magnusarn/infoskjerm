@@ -13,16 +13,28 @@ import type { Screen } from "./types";
 
 // Felles steder – bytt til kontorets adresse/holdeplass.
 // Finn holdeplass-ID (NSR:StopPlace:xxxx) på https://stoppested.entur.org
-const OSLO = { place: "Oslo", lat: 59.9139, lon: 10.7522 };
-const HOLDEPLASS = { stopId: "NSR:StopPlace:337", stopName: "Oslo S" };
+// Kontoret: Hovfaret 17 A, 0275 Oslo
+const VAER = { place: "Hovfaret, Skøyen", lat: 59.9268, lon: 10.6768 };
+
+// Holdeplasser nær kontoret: Hoff (165 m, trikk + buss) og Skøyen stasjon (ca. 450 m)
+const SENTRUM = ["Nationaltheatret", "Oslo S", "Jernbanetorget"];
+const AVGANGER = {
+  type: "departures" as const,
+  title: "Avganger i nærheten",
+  boards: [
+    { title: "Tog mot sentrum", stopId: "NSR:StopPlace:59651", modes: ["rail" as const], towards: SENTRUM, max: 5 },
+    { title: "Trikk mot sentrum", stopId: "NSR:StopPlace:58286", modes: ["tram" as const], towards: SENTRUM, max: 5 },
+    { title: "Buss", stopId: "NSR:StopPlace:58286", modes: ["bus" as const], max: 5 },
+  ],
+};
 
 export const SCREENS: Record<string, Screen> = {
   "kontor-1": {
     name: "Kontor",
     private: false,
     slides: [
-      { type: "weather", seconds: 20, ...OSLO },
-      { type: "departures", seconds: 20, ...HOLDEPLASS },
+      { type: "weather", seconds: 20, ...VAER },
+      { ...AVGANGER, seconds: 25 },
       { type: "calendar", seconds: 20, title: "Denne uka", days: 7 },
     ],
   },
@@ -43,8 +55,8 @@ export const SCREENS: Record<string, Screen> = {
     private: false,
     slides: [
       { type: "youtube", seconds: 60, videoIdEnv: "YOUTUBE_VIDEO_ID" },
-      { type: "departures", seconds: 15, ...HOLDEPLASS },
-      { type: "weather", seconds: 15, ...OSLO },
+      { ...AVGANGER, seconds: 20 },
+      { type: "weather", seconds: 15, ...VAER },
       {
         type: "news",
         seconds: 20,
