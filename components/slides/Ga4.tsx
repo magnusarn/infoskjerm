@@ -4,6 +4,7 @@ import { compact, nf, weekday } from "../format";
 type D = {
   kpis: Record<"users" | "sessions" | "keyEvents" | "views", { value: number; previous: number }>;
   formLabel?: string;
+  formNote?: string;
   daily: { date: string; sessions: number }[];
   topPages: { path: string; views: number }[];
   channels: { name: string; sessions: number }[];
@@ -31,7 +32,7 @@ export default function Ga4View({ d, title }: { d: D; title: string }) {
         <KpiCard label="Brukere" {...d.kpis.users} format={compact} />
         <KpiCard label="Økter" {...d.kpis.sessions} format={compact} />
         <KpiCard label="Sidevisninger" {...d.kpis.views} format={compact} />
-        <KpiCard label={d.formLabel ?? "Nøkkelhendelser"} {...d.kpis.keyEvents} />
+        <KpiCard label={d.formLabel ?? "Nøkkelhendelser"} {...d.kpis.keyEvents} note={d.formNote} />
       </div>
       <div className="dash-row">
         <section className="card">

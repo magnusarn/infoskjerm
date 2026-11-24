@@ -7,12 +7,14 @@ export function KpiCard({
   previous,
   format = (n) => nf(n),
   invert = false,
+  note,
 }: {
   label: string;
   value: number;
   previous: number;
   format?: (n: number) => string;
   invert?: boolean;
+  note?: string;
 }) {
   const pct = change(value, previous);
   const good = pct === null ? null : invert ? pct < 0 : pct > 0;
@@ -25,6 +27,7 @@ export function KpiCard({
           {pct > 0 ? "▲" : "▼"} {nf(Math.abs(pct), 1)} % <span>mot uka før</span>
         </div>
       )}
+      {note && <div className="kpi-note">{note}</div>}
     </div>
   );
 }

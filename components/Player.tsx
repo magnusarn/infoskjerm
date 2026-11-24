@@ -82,12 +82,30 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
     return () => timers.forEach(clearInterval);
   }, [slides, load]);
 
+  // ── Skjul slides som ikke er koblet til ennå (mangler nøkler, lenke eller video) ──
+  const hidden = (i: number) => {
+    if (only !== undefined) return false;
+    const sl = slides[i];
+    if (sl.type === "iframe" && !sl.url) return true;
+    if (sl.type === "youtube" && !sl.videoId && !sl.playlistId) return true;
+    return Boolean(cache[i]?.data?.notConfigured);
+  };
+  const visible = slides.map((_, i) => i).filter((i) => !hidden(i));
+
+  // Står vi på en slide som nettopp ble skjult, hopp videre med en gang
+  useEffect(() => {
+    if (hidden(index) && visible.length) setIndex(visible.find((i) => i > index) ?? visible[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cache, index]);
+
   // ── Rotasjon ──
   useEffect(() => {
-    if (only !== undefined || slides.length < 2) return;
-    const t = setTimeout(() => setIndex((i) => (i + 1) % slides.length), slides[index].seconds * 1000);
+    if (only !== undefined || visible.length < 2) return;
+    const next = visible.find((i) => i > index) ?? visible[0];
+    const t = setTimeout(() => setIndex(next), slides[index].seconds * 1000);
     return () => clearTimeout(t);
-  }, [index, slides, only]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, slides, only, visible.join(",")]);
 
   // ── Last siden på nytt ved ny deploy, og uansett hver 6. time ──
   useEffect(() => {
@@ -104,6 +122,19 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
     const b = setTimeout(() => location.reload(), 6 * 3600_000);
     return () => (clearInterval(a), clearTimeout(b));
   }, []);
+
+  if (!visible.length) {
+    return (
+      <div className="viewport">
+        <div className="stage" ref={stageRef}>
+          <header className="topbar">
+            <div className="brand">{name}</div>
+            <Clock />
+          </header>
+        </div>
+      </div>
+    );
+  }
 
   const slide = slides[index];
   const entry = cache[index];
@@ -126,7 +157,7 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
 
         <footer className={fullBleed ? "bottombar overlay" : "bottombar"}>
           <div className="dots">
-            {slides.map((_, i) => (
+            {visible.map((i) => (
               <span key={i} className={i === index ? "dot on" : "dot"} />
             ))}
           </div>
@@ -137,7 +168,7 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
             {query.demo === "1" && <span className="demo">DEMO-DATA</span>}
             <span>{source}</span>
           </div>
-          {only === undefined && slides.length > 1 && (
+          {only === undefined && visible.length > 1 && (
             <div className="progress" key={`p${index}`} style={{ animationDuration: `${slide.seconds}s` }} />
           )}
         </footer>

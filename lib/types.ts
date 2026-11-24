@@ -23,7 +23,7 @@ export type Ga4Slide = Base & {
   type: "ga4";
   title: string;
   /** Hendelsen som telles som «innsendte skjemaer». Uten denne vises alle nøkkelhendelser. */
-  formEvent?: { name: string; label: string };
+  formEvent?: { name: string; label: string; note?: string };
 };
 export type MetaSlide = Base & { type: "meta"; title: string };
 /** Power BI «Publish to web», Looker Studio-embed eller annen side som tillater iframe */

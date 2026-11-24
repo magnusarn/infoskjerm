@@ -66,8 +66,13 @@ export const SCREENS: Record<string, Screen> = {
         type: "ga4",
         seconds: 25,
         title: "Nettsiden – siste 7 dager",
-        // Midlertidig: klikk på «Få en gratis verdivurdering her». Bytt til en ekte innsendingshendelse når den finnes i GA4.
-        formEvent: { name: "Få en gratis verdivurdering her", label: "Verdivurderinger" },
+        // Bestillinger av returpose som GA4 har registrert (hendelsen «Få en gratis verdivurdering her»).
+        // Faktisk antall bestillinger er høyere – ikke alle blir sporet. Bytt hendelse når sporingen er forbedret.
+        formEvent: {
+          name: "Få en gratis verdivurdering her",
+          label: "Bestilte returposer",
+          note: "Kun bestillinger sporet i GA4 – faktisk antall er høyere",
+        },
       },
       { type: "meta", seconds: 25, title: "Meta-annonser – siste 7 dager" },
       { type: "iframe", seconds: 30, title: "Power BI", urlEnv: "POWERBI_EMBED_URL" },

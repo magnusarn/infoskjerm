@@ -15,6 +15,7 @@ export type Ga4Data =
   | {
       kpis: { users: Kpi; sessions: Kpi; keyEvents: Kpi; views: Kpi };
       formLabel?: string;
+      formNote?: string;
       daily: { date: string; sessions: number }[];
       topPages: { path: string; views: number }[];
       channels: { name: string; sessions: number }[];
@@ -101,6 +102,7 @@ export async function getGa4(slide: Ga4Slide): Promise<Ga4Data> {
       views: kpi(3),
     },
     formLabel: slide.formEvent?.label,
+    formNote: slide.formEvent?.note,
     daily: (daily.rows ?? []).map((r: any) => ({ date: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),
     topPages: (pages.rows ?? []).map((r: any) => ({ path: r.dimensionValues[0].value, views: num(r.metricValues[0]) })),
     channels: (channels.rows ?? []).map((r: any) => ({ name: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),

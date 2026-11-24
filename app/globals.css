@@ -201,6 +201,7 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .kpi-delta { font-size: 28px; margin-top: 12px; font-weight: 600; }
 .kpi-delta span { display: block; color: var(--muted); font-weight: 400; font-size: 22px; margin-top: 2px; }
 .kpi-delta.up { color: var(--up); }
+.kpi-note { font-size: 20px; color: var(--muted); margin-top: 8px; line-height: 1.3; font-style: italic; }
 .kpi-delta.down { color: var(--down); }
 .dash-row { flex: 1; display: grid; grid-template-columns: 1.1fr 1fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 28px; min-height: 0; }
 .dash-row .card { overflow: hidden; display: flex; flex-direction: column; }
