@@ -18,7 +18,6 @@ export type Ga4Data =
       daily: { date: string; sessions: number }[];
       topPages: { path: string; views: number }[];
       channels: { name: string; sessions: number }[];
-      events?: { name: string; key: boolean; count: number }[];
     }
   | { notConfigured: true; hint: string };
 
@@ -73,14 +72,6 @@ export async function getGa4(slide: Ga4Slide): Promise<Ga4Data> {
           ? { filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: slide.formEvent.name } } }
           : undefined,
       },
-      {
-        // Oversikt over hendelser (vises ikke, brukes til å velge riktig skjemahendelse)
-        dateRanges: [cur],
-        dimensions: [{ name: "eventName" }, { name: "isKeyEvent" }],
-        metrics: [{ name: "eventCount" }],
-        orderBys: [{ metric: { metricName: "eventCount" }, desc: true }],
-        limit: 40,
-      },
     ],
   };
 
@@ -91,7 +82,7 @@ export async function getGa4(slide: Ga4Slide): Promise<Ga4Data> {
     next: { revalidate: 900 },
   });
   if (!res.ok) throw new Error(`GA4 svarte ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  const [totals, daily, pages, channels, form, events] = (await res.json()).reports;
+  const [totals, daily, pages, channels, form] = (await res.json()).reports;
 
   const num = (v: any) => Number(v?.value ?? 0);
   const rowFor = (name: string) =>
@@ -113,10 +104,5 @@ export async function getGa4(slide: Ga4Slide): Promise<Ga4Data> {
     daily: (daily.rows ?? []).map((r: any) => ({ date: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),
     topPages: (pages.rows ?? []).map((r: any) => ({ path: r.dimensionValues[0].value, views: num(r.metricValues[0]) })),
     channels: (channels.rows ?? []).map((r: any) => ({ name: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),
-    events: (events?.rows ?? []).map((r: any) => ({
-      name: r.dimensionValues[0].value,
-      key: r.dimensionValues[1].value === "true",
-      count: num(r.metricValues[0]),
-    })),
   };
 }
