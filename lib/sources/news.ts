@@ -8,7 +8,7 @@ const parser = new XMLParser({ ignoreAttributes: false });
 const text = (v: any) => (typeof v === "string" ? v : v?.["#text"] ?? "");
 
 async function readFeed(feed: Feed): Promise<NewsItem[]> {
-  let lastError = "";
+  const errors: string[] = [];
   for (const url of feed.urls) {
     try {
       const res = await fetch(url, { next: { revalidate: 600 }, headers: { "User-Agent": "infoskjerm/1.0" } });
@@ -23,10 +23,10 @@ async function readFeed(feed: Feed): Promise<NewsItem[]> {
         published: i.pubDate || i.published || i.updated || i["dc:date"] || undefined,
       }));
     } catch (e) {
-      lastError = `${url}: ${(e as Error).message}`;
+      errors.push(`${url}: ${(e as Error).message}`);
     }
   }
-  throw new Error(lastError);
+  throw new Error(errors.join(" | "));
 }
 
 /** Henter alle kildene, slår dem sammen og sorterer nyeste først. En kilde som feiler hoppes over. */

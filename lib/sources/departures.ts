@@ -13,7 +13,7 @@ export type Departure = {
   cancelled: boolean;
   platform?: string;
 };
-export type BoardData = { title: string; stopName: string; departures: Departure[] };
+export type BoardData = { title: string; stopName: string; departures: Departure[]; notices: string[] };
 export type DeparturesData = { title?: string; boards: BoardData[] };
 
 function query(board: Board, stopId: string) {
@@ -24,6 +24,7 @@ function query(board: Board, stopId: string) {
   return `{
     stopPlace(id: "${stopId}") {
       name
+      situations { id summary { value language } description { value language } }
       estimatedCalls(numberOfDepartures: ${n}, timeRange: 14400${modes}) {
         realtime
         cancellation
@@ -32,6 +33,7 @@ function query(board: Board, stopId: string) {
         stopPositionInPattern
         destinationDisplay { frontText }
         quay { publicCode }
+        situations { id summary { value language } description { value language } }
         serviceJourney { line { publicCode transportMode } ${pattern} }
       }
     }
@@ -68,9 +70,21 @@ async function getBoardAt(board: Board, stopId: string): Promise<BoardData> {
     return later.some((q) => towards.some((t) => q.name?.toLowerCase().includes(t)));
   });
 
+  // Avvik: meldinger på holdeplassen + på avgangene som faktisk vises (etter filter)
+  const shown = calls.slice(0, board.max ?? 8);
+  const seen = new Set<string>();
+  const notices: string[] = [];
+  for (const sit of [...(sp.situations ?? []), ...shown.flatMap((c: any) => c.situations ?? [])]) {
+    if (!sit || seen.has(sit.id)) continue;
+    seen.add(sit.id);
+    const text = pickLang(sit.summary) || pickLang(sit.description);
+    if (text && !notices.includes(text)) notices.push(text);
+  }
+
   return {
     title: board.title,
     stopName: sp.name,
+    notices: notices.slice(0, 2),
     departures: calls.slice(0, board.max ?? 8).map((c) => ({
       line: c.serviceJourney?.line?.publicCode ?? "",
       mode: c.serviceJourney?.line?.transportMode ?? "bus",
@@ -82,6 +96,12 @@ async function getBoardAt(board: Board, stopId: string): Promise<BoardData> {
       platform: c.quay?.publicCode || undefined,
     })),
   };
+}
+
+function pickLang(list?: { value: string; language?: string }[]) {
+  if (!list?.length) return "";
+  const no = list.find((l) => ["no", "nob", "nb", "nn", "nno"].includes((l.language ?? "").toLowerCase()));
+  return (no ?? list[0]).value?.trim() ?? "";
 }
 
 export async function getDepartures(s: DeparturesSlide): Promise<DeparturesData> {

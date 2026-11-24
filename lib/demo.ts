@@ -41,6 +41,7 @@ export function demoData(slide: Slide): unknown {
           return {
             title: b.title,
             stopName: b.stopId,
+            notices: mode === "tram" ? ["Buss erstatter trikken mellom Thune og Lilleaker fram til januar 2027."] : [],
             departures: rows.slice(0, b.max ?? 8).map(([line, destination], i) => ({
               line,
               mode,

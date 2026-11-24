@@ -40,7 +40,12 @@ const AVGANGER = {
 const NRK = { name: "NRK", urls: ["https://www.nrk.no/toppsaker.rss"] };
 const NRK_OKONOMI = {
   name: "NRK",
-  urls: ["https://www.nrk.no/okonomi/toppsaker.rss", "https://www.nrk.no/nyheter/okonomi/toppsaker.rss"],
+  urls: [
+    "https://www.nrk.no/okonomi/toppsaker.rss",
+    "https://www.nrk.no/okonomi/siste.rss",
+    "https://www.nrk.no/nyheter/okonomi/siste.rss",
+    "https://www.nrk.no/nyttig/toppsaker.rss",
+  ],
 };
 const FINANSAVISEN = {
   name: "Finansavisen",

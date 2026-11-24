@@ -63,6 +63,12 @@ function BoardView({ b, compact }: { b: BoardData; compact: boolean }) {
           </div>
         );
       })}
+      {b.notices?.map((n, i) => (
+        <div className="notice" key={`n${i}`}>
+          <span className="notice-icon">!</span>
+          <span>{n}</span>
+        </div>
+      ))}
     </section>
   );
 }
