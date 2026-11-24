@@ -53,6 +53,7 @@ export async function getNews(s: NewsSlide): Promise<NewsData> {
     for (const l of lists) if (l[round] && items.length < max) items.push(l[round]);
   }
   if (!items.length) throw new Error(`Ingen nyhetskilder svarte: ${failed.join("; ")}`);
+  items.sort((a, b) => time(b) - time(a));
   return {
     sources: s.feeds.map((f) => f.name).filter((n) => items.some((i) => i.source === n)),
     items,
