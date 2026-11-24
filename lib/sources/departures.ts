@@ -16,13 +16,13 @@ export type Departure = {
 export type BoardData = { title: string; stopName: string; departures: Departure[] };
 export type DeparturesData = { title?: string; boards: BoardData[] };
 
-function query(board: Board) {
+function query(board: Board, stopId: string) {
   const modes = board.modes?.length ? `, whiteListedModes: [${board.modes.join(", ")}]` : "";
   // Med retningsfilter henter vi flere avganger, og hele stoppmønsteret, så vi kan sile etterpå
   const n = board.towards?.length ? 40 : (board.max ?? 8) + 4;
   const pattern = board.towards?.length ? "quays { name }" : "";
   return `{
-    stopPlace(id: "${board.stopId}") {
+    stopPlace(id: "${stopId}") {
       name
       estimatedCalls(numberOfDepartures: ${n}, timeRange: 14400${modes}) {
         realtime
@@ -39,17 +39,27 @@ function query(board: Board) {
 }
 
 async function getBoard(board: Board): Promise<BoardData> {
+  const ids = [board.stopId, ...(board.fallbackStopIds ?? [])];
+  let result: BoardData | undefined;
+  for (const id of ids) {
+    result = await getBoardAt(board, id);
+    if (result.departures.length) return result;
+  }
+  return result!;
+}
+
+async function getBoardAt(board: Board, stopId: string): Promise<BoardData> {
   const res = await fetch("https://api.entur.io/journey-planner/v3/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json", "ET-Client-Name": CLIENT },
-    body: JSON.stringify({ query: query(board) }),
+    body: JSON.stringify({ query: query(board, stopId) }),
     next: { revalidate: 20 },
   });
   if (!res.ok) throw new Error(`Entur svarte ${res.status}`);
   const json = await res.json();
   if (json.errors?.length) throw new Error(`Entur: ${json.errors[0].message}`);
   const sp = json.data?.stopPlace;
-  if (!sp) throw new Error(`Fant ikke holdeplass ${board.stopId}`);
+  if (!sp) throw new Error(`Fant ikke holdeplass ${stopId}`);
 
   const towards = board.towards?.map((t) => t.toLowerCase());
   const calls = (sp.estimatedCalls as any[]).filter((c) => {

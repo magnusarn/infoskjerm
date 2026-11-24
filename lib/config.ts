@@ -16,14 +16,22 @@ import type { Screen } from "./types";
 // Kontoret: Hovfaret 17 A, 0275 Oslo
 const VAER = { place: "Hovfaret, Skøyen", lat: 59.9268, lon: 10.6768 };
 
-// Holdeplasser nær kontoret: Hoff (165 m, trikk + buss) og Skøyen stasjon (ca. 450 m)
+// Holdeplasser nær kontoret: Hoff (165 m, trikk + buss), Skøyen stasjon (ca. 450 m), Thune (ca. 780 m)
 const SENTRUM = ["Nationaltheatret", "Oslo S", "Jernbanetorget"];
 const AVGANGER = {
   type: "departures" as const,
   title: "Avganger i nærheten",
   boards: [
     { title: "Tog mot sentrum", stopId: "NSR:StopPlace:59651", modes: ["rail" as const], towards: SENTRUM, max: 5 },
-    { title: "Trikk mot sentrum", stopId: "NSR:StopPlace:58286", modes: ["tram" as const], towards: SENTRUM, max: 5 },
+    // Trikken er erstattet av buss 13B/13E mellom Thune og Lilleaker til januar 2027 – da brukes Thune automatisk
+    {
+      title: "Trikk mot sentrum",
+      stopId: "NSR:StopPlace:58286", // Hoff
+      fallbackStopIds: ["NSR:StopPlace:58287", "NSR:StopPlace:58288"], // Skøyen, Thune
+      modes: ["tram" as const],
+      towards: SENTRUM,
+      max: 5,
+    },
     { title: "Buss", stopId: "NSR:StopPlace:58286", modes: ["bus" as const], max: 5 },
   ],
 };

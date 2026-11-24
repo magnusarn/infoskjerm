@@ -6,6 +6,8 @@ export type Board = {
   title: string;
   /** NSR:StopPlace:xxxx – finn den på https://stoppested.entur.org */
   stopId: string;
+  /** Reserveholdeplasser i prioritert rekkefølge – brukes hvis stopId ikke har avganger (f.eks. ved buss for trikk) */
+  fallbackStopIds?: string[];
   /** Bare disse transportmidlene, f.eks. ["rail"], ["tram"], ["bus"] */
   modes?: ("bus" | "tram" | "rail" | "metro" | "water" | "coach")[];
   /** Bare avganger som senere stopper på en av disse holdeplassene (navn), f.eks. ["Nationaltheatret"] */
