@@ -47,7 +47,7 @@ const FINANSAVISEN = {
 
 export const SCREENS: Record<string, Screen> = {
   "kontor-1": {
-    name: "Kontor",
+    name: "Skøyen",
     private: false,
     slides: [
       { type: "weather", seconds: 20, ...VAER },
