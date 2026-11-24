@@ -105,7 +105,7 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
 
   const slide = slides[index];
   const entry = cache[index];
-  const source = slide.type === "news" ? `Kilde: ${slide.sourceName}` : SOURCES[slide.type] ?? "";
+  const source = slide.type === "news" ? `Kilder: ${slide.feeds.map((f) => f.name).join(", ")}` : SOURCES[slide.type] ?? "";
   const fullBleed = slide.type === "youtube" || slide.type === "image";
 
   return (

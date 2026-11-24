@@ -71,18 +71,20 @@ export function demoData(slide: Slide): unknown {
           return { title, start: start.toISOString(), end: end.toISOString(), allDay };
         }),
       };
-    case "news":
+    case "news": {
+      const names = slide.feeds.map((f) => f.name);
       return {
-        source: slide.sourceName,
+        sources: names,
         items: [
-          "Eksempeloverskrift: Rekordhøy gullpris før jul",
-          "Eksempeloverskrift: Norges Bank holder renten uendret",
-          "Eksempeloverskrift: Snø og glatte veier i hele Østlandet",
-          "Eksempeloverskrift: Ny undersøkelse om nordmenns sparevaner",
-          "Eksempeloverskrift: Julehandelen er i gang",
-          "Eksempeloverskrift: Kollektivtrafikken går som normalt",
-        ].map((title, i) => ({ title, published: iso(-i * 37) })),
+          "Eksempel: Gullprisen satte ny rekord i natt",
+          "Eksempel: Norges Bank holder renten uendret",
+          "Eksempel: Oslo Børs stiger etter sterke tall fra Equinor",
+          "Eksempel: Kronen styrker seg mot euro",
+          "Eksempel: Julehandelen ventes å slå fjorårets rekord",
+          "Eksempel: Boligprisene flater ut i Oslo",
+        ].map((title, i) => ({ title, source: names[i % names.length], published: iso(-i * 37) })),
       };
+    }
     case "ga4":
       return {
         kpis: {

@@ -16,7 +16,9 @@ export type Board = {
 };
 export type DeparturesSlide = Base & { type: "departures"; title?: string; boards: Board[] };
 export type CalendarSlide = Base & { type: "calendar"; title: string; days?: number };
-export type NewsSlide = Base & { type: "news"; title: string; feedUrl: string; sourceName: string };
+/** Én nyhetskilde. `urls` prøves i rekkefølge – første som svarer brukes. */
+export type Feed = { name: string; urls: string[] };
+export type NewsSlide = Base & { type: "news"; title: string; feeds: Feed[]; max?: number };
 export type Ga4Slide = Base & { type: "ga4"; title: string };
 export type MetaSlide = Base & { type: "meta"; title: string };
 /** Power BI «Publish to web», Looker Studio-embed eller annen side som tillater iframe */

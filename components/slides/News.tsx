@@ -3,13 +3,14 @@ import { hhmm } from "../format";
 
 export default function NewsView({ d, title }: { d: NewsData; title: string }) {
   const [first, ...rest] = d.items;
+  const multi = d.sources.length > 1;
   return (
     <div className="news">
       <h1 className="title">{title}</h1>
       {first && (
         <section className="news-top card">
           <div className="label">
-            {d.source}
+            {first.source}
             {first.published && ` · ${hhmm(first.published)}`}
           </div>
           <div className="headline">{first.title}</div>
@@ -17,8 +18,9 @@ export default function NewsView({ d, title }: { d: NewsData; title: string }) {
       )}
       <div className="news-list">
         {rest.slice(0, 5).map((n, i) => (
-          <div className="news-item" key={i}>
+          <div className={multi ? "news-item multi" : "news-item"} key={i}>
             <span className="t">{n.published ? hhmm(n.published) : ""}</span>
+            {multi && <span className="src">{n.source}</span>}
             <span className="h">{n.title}</span>
           </div>
         ))}
