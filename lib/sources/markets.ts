@@ -16,12 +16,18 @@ export type Metal = {
   changeToday: number | null; // prosent
   changeWeek: number | null; // prosent
   history: { date: string; price: number }[];
+  fetchedAt: string;
 };
-export type Fx = { code: string; label: string; rate: number; date: string; changeDay: number | null; changeWeek: number | null };
+export type Fx = { code: string; label: string; rate: number; date: string; changeDay: number | null; changeWeek: number | null; fetchedAt: string };
 export type MarketsData = { metals: Metal[]; fx: Fx[]; failed?: string[] };
 
 const pct = (now: number, then?: number) => (then ? ((now - then) / then) * 100 : null);
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
+/** Når svaret faktisk ble hentet fra kilden (Date-headeren følger med i Next sin cache) */
+const fetchedAt = (res: Response) => {
+  const d = new Date(res.headers.get("date") ?? "");
+  return (isNaN(+d) ? new Date() : d).toISOString();
+};
 
 async function getMetals(): Promise<Metal[]> {
   const to = new Date();
@@ -32,6 +38,7 @@ async function getMetals(): Promise<Metal[]> {
   ]);
   if (!spotRes.ok) throw new Error(`Spotpris svarte ${spotRes.status}`);
   const spot = JSON.parse((await spotRes.text()).trim()).primary;
+  const spotAt = fetchedAt(spotRes);
   const hist: any[] = histRes.ok ? JSON.parse((await histRes.text()).trim()) : [];
 
   const defs = [
@@ -55,6 +62,7 @@ async function getMetals(): Promise<Metal[]> {
       changeToday: typeof s.change === "number" ? s.change : null,
       changeWeek: pct(s.price, ref?.price),
       history: series.slice(-30),
+      fetchedAt: spotAt,
     };
   });
 }
@@ -66,6 +74,7 @@ async function getFx(): Promise<Fx[]> {
   );
   if (!res.ok) throw new Error(`Norges Bank svarte ${res.status}`);
   const [head, ...lines] = (await res.text()).trim().split("\n");
+  const fxAt = fetchedAt(res);
   const cols = head.split(";");
   const at = (name: string) => cols.indexOf(name);
   const rows = lines.map((l) => l.split(";"));
@@ -85,6 +94,7 @@ async function getFx(): Promise<Fx[]> {
       date: last.date,
       changeDay: pct(last.value, obs[obs.length - 2]?.value),
       changeWeek: pct(last.value, ref?.value),
+      fetchedAt: fxAt,
     };
   });
 }

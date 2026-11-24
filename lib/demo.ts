@@ -131,13 +131,13 @@ export function demoData(slide: Slide): unknown {
         Array.from({ length: n }, (_, i) => ({ date: day(i - n), price: start * (1 + Math.sin(i / 4) * 0.04 + i * 0.002) }));
       return {
         metals: [
-          { code: "XAU", name: "Gull", price: 1145.34, unit: "g", changeToday: 0.7, changeWeek: -4.85, history: hist(1100) },
-          { code: "XAG", name: "Sølv", price: 13365, unit: "kg", changeToday: 0.03, changeWeek: -9.2, history: hist(13000) },
+          { code: "XAU", name: "Gull", price: 1145.34, unit: "g", changeToday: 0.7, changeWeek: -4.85, history: hist(1100), fetchedAt: iso(-1) },
+          { code: "XAG", name: "Sølv", price: 13365, unit: "kg", changeToday: 0.03, changeWeek: -9.2, history: hist(13000), fetchedAt: iso(-1) },
         ],
         fx: [
-          { code: "USD", label: "1 USD", rate: 9.8076, date: day(-1), changeDay: 0.56, changeWeek: 1.1 },
-          { code: "EUR", label: "1 EUR", rate: 10.7285, date: day(-1), changeDay: 0.1, changeWeek: 0.4 },
-          { code: "SEK", label: "100 SEK", rate: 95.47, date: day(-1), changeDay: -0.13, changeWeek: -0.2 },
+          { code: "USD", label: "1 USD", rate: 9.8076, date: day(-1), changeDay: 0.56, changeWeek: 1.1, fetchedAt: iso(-20) },
+          { code: "EUR", label: "1 EUR", rate: 10.7285, date: day(-1), changeDay: 0.1, changeWeek: 0.4, fetchedAt: iso(-20) },
+          { code: "SEK", label: "100 SEK", rate: 95.47, date: day(-1), changeDay: -0.13, changeWeek: -0.2, fetchedAt: iso(-20) },
         ],
       };
     }

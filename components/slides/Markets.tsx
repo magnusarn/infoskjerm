@@ -1,5 +1,5 @@
 import type { MarketsData, Metal, Fx } from "@/lib/sources/markets";
-import { nf } from "../format";
+import { hhmm, nf } from "../format";
 
 function Change({ label, value }: { label: string; value: number | null }) {
   if (value === null) return null;
@@ -51,7 +51,10 @@ function MetalCard({ m }: { m: Metal }) {
         <Change label="Siste 7 dager" value={m.changeWeek} />
       </div>
       <Sparkline points={[...m.history.map((h) => h.price), m.price]} />
-      <div className="mk-spark-label">Siste 30 dager</div>
+      <div className="mk-spark-label">
+        <span>Siste 30 dager</span>
+        <span>Spotpris hentet kl. {hhmm(m.fetchedAt)}</span>
+      </div>
     </section>
   );
 }
@@ -90,7 +93,9 @@ export default function MarketsView({ d, title }: { d: MarketsData; title: strin
             <div className="mk-fx-note">
               Valutakurser fra Norges Bank
               <br />
-              {new Date(fxDate + "T12:00:00").toLocaleDateString("nb-NO", { day: "numeric", month: "long" })}
+              Gjelder {new Date(fxDate + "T12:00:00").toLocaleDateString("nb-NO", { day: "numeric", month: "long" })}
+              <br />
+              Hentet kl. {hhmm(d.fx[0].fetchedAt)}
             </div>
           )}
         </div>
