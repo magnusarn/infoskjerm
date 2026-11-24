@@ -9,7 +9,10 @@ export default function WeatherView({ d }: { d: WeatherData }) {
         <div className="label">Været nå · {d.place}</div>
         <div className="w-now-main">
           <span className="w-icon">{now.icon}</span>
-          <span className={d.now.temp < 0 ? "w-temp cold" : "w-temp warm"}>{nf(d.now.temp)}°</span>
+          <span className={d.now.temp < 0 ? "w-temp cold" : "w-temp warm"}>
+            {nf(d.now.temp)}
+            <span className="deg">°</span>
+          </span>
         </div>
         <div className="w-desc">{now.text}</div>
         <div className="w-sub">
