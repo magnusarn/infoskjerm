@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
         case "news":
           return getNews(slide);
         case "ga4":
-          return getGa4();
+          return getGa4(slide);
         case "meta":
           return getMeta();
         case "markets":

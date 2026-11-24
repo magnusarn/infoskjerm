@@ -62,7 +62,13 @@ export const SCREENS: Record<string, Screen> = {
     // Interne tall: krever ?key=<SCREEN_KEY> i URL-en
     private: true,
     slides: [
-      { type: "ga4", seconds: 25, title: "Nettsiden – siste 7 dager" },
+      {
+        type: "ga4",
+        seconds: 25,
+        title: "Nettsiden – siste 7 dager",
+        // Midlertidig: klikk på «Få en gratis verdivurdering her». Bytt til en ekte innsendingshendelse når den finnes i GA4.
+        formEvent: { name: "Få en gratis verdivurdering her", label: "Verdivurderinger" },
+      },
       { type: "meta", seconds: 25, title: "Meta-annonser – siste 7 dager" },
       { type: "iframe", seconds: 30, title: "Power BI", urlEnv: "POWERBI_EMBED_URL" },
     ],

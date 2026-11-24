@@ -1,4 +1,5 @@
 import { GoogleAuth } from "google-auth-library";
+import type { Ga4Slide } from "../types";
 
 /**
  * GA4 Data API via servicekonto.
@@ -13,6 +14,7 @@ export type Kpi = { value: number; previous: number };
 export type Ga4Data =
   | {
       kpis: { users: Kpi; sessions: Kpi; keyEvents: Kpi; views: Kpi };
+      formLabel?: string;
       daily: { date: string; sessions: number }[];
       topPages: { path: string; views: number }[];
       channels: { name: string; sessions: number }[];
@@ -20,7 +22,7 @@ export type Ga4Data =
     }
   | { notConfigured: true; hint: string };
 
-export async function getGa4(): Promise<Ga4Data> {
+export async function getGa4(slide: Ga4Slide): Promise<Ga4Data> {
   const property = process.env.GA4_PROPERTY_ID;
   const credsRaw = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
   if (!property || !credsRaw)
@@ -61,6 +63,17 @@ export async function getGa4(): Promise<Ga4Data> {
         limit: 6,
       },
       {
+        // Valgt skjemahendelse, denne og forrige uke
+        dateRanges: [
+          { ...cur, name: "cur" },
+          { startDate: "14daysAgo", endDate: "8daysAgo", name: "prev" },
+        ],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: slide.formEvent
+          ? { filter: { fieldName: "eventName", stringFilter: { matchType: "EXACT", value: slide.formEvent.name } } }
+          : undefined,
+      },
+      {
         // Oversikt over hendelser (vises ikke, brukes til å velge riktig skjemahendelse)
         dateRanges: [cur],
         dimensions: [{ name: "eventName" }, { name: "isKeyEvent" }],
@@ -78,7 +91,7 @@ export async function getGa4(): Promise<Ga4Data> {
     next: { revalidate: 900 },
   });
   if (!res.ok) throw new Error(`GA4 svarte ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  const [totals, daily, pages, channels, events] = (await res.json()).reports;
+  const [totals, daily, pages, channels, form, events] = (await res.json()).reports;
 
   const num = (v: any) => Number(v?.value ?? 0);
   const rowFor = (name: string) =>
@@ -86,9 +99,17 @@ export async function getGa4(): Promise<Ga4Data> {
   const c = rowFor("cur");
   const p = rowFor("prev");
   const kpi = (i: number): Kpi => ({ value: num(c[i]), previous: num(p[i]) });
+  const formRow = (name: string) =>
+    form?.rows?.find((r: any) => r.dimensionValues?.some((d: any) => d.value === name))?.metricValues?.[0];
 
   return {
-    kpis: { users: kpi(0), sessions: kpi(1), keyEvents: kpi(2), views: kpi(3) },
+    kpis: {
+      users: kpi(0),
+      sessions: kpi(1),
+      keyEvents: slide.formEvent ? { value: num(formRow("cur")), previous: num(formRow("prev")) } : kpi(2),
+      views: kpi(3),
+    },
+    formLabel: slide.formEvent?.label,
     daily: (daily.rows ?? []).map((r: any) => ({ date: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),
     topPages: (pages.rows ?? []).map((r: any) => ({ path: r.dimensionValues[0].value, views: num(r.metricValues[0]) })),
     channels: (channels.rows ?? []).map((r: any) => ({ name: r.dimensionValues[0].value, sessions: num(r.metricValues[0]) })),

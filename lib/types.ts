@@ -19,7 +19,12 @@ export type CalendarSlide = Base & { type: "calendar"; title: string; days?: num
 /** Én nyhetskilde. `urls` prøves i rekkefølge – første som svarer brukes. */
 export type Feed = { name: string; urls: string[] };
 export type NewsSlide = Base & { type: "news"; title: string; feeds: Feed[]; max?: number };
-export type Ga4Slide = Base & { type: "ga4"; title: string };
+export type Ga4Slide = Base & {
+  type: "ga4";
+  title: string;
+  /** Hendelsen som telles som «innsendte skjemaer». Uten denne vises alle nøkkelhendelser. */
+  formEvent?: { name: string; label: string };
+};
 export type MetaSlide = Base & { type: "meta"; title: string };
 /** Power BI «Publish to web», Looker Studio-embed eller annen side som tillater iframe */
 export type IframeSlide = Base & { type: "iframe"; title: string; url?: string; urlEnv?: string };
