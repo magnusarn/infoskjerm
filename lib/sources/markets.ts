@@ -18,10 +18,25 @@ export type Metal = {
   history: { date: string; price: number }[];
   fetchedAt: string;
 };
-export type Fx = { code: string; label: string; rate: number; date: string; changeDay: number | null; changeWeek: number | null; fetchedAt: string };
-export type MarketsData = { metals: Metal[]; fx: Fx[]; failed?: string[] };
+export type Fx = {
+  code: string;
+  label: string;
+  rate: number;
+  date: string;
+  changeDay: number | null;
+  changeWeek: number | null;
+  /** Kronens utvikling mot valutaen (positiv = sterkere krone) */
+  kroneDay: number | null;
+  kroneWeek: number | null;
+  fetchedAt: string;
+};
+/** Importveid kronekurs (I-44). Lavere tall = sterkere krone. */
+export type KroneIndex = { value: number; date: string; kroneDay: number | null; kroneWeek: number | null; fetchedAt: string };
+export type MarketsData = { metals: Metal[]; fx: Fx[]; krone?: KroneIndex; failed?: string[] };
 
 const pct = (now: number, then?: number) => (then ? ((now - then) / then) * 100 : null);
+/** Kronens endring når kursen er oppgitt som NOK per valuta: flere kroner per valuta = svakere krone */
+const kronePct = (now: number, then?: number) => (then ? (then / now - 1) * 100 : null);
 const ymd = (d: Date) => d.toISOString().slice(0, 10);
 /** Når svaret faktisk ble hentet fra kilden (Date-headeren følger med i Next sin cache) */
 const fetchedAt = (res: Response) => {
@@ -67,9 +82,9 @@ async function getMetals(): Promise<Metal[]> {
   });
 }
 
-async function getFx(): Promise<Fx[]> {
+async function getFx(): Promise<{ fx: Fx[]; krone?: KroneIndex }> {
   const res = await fetch(
-    "https://data.norges-bank.no/api/data/EXR/B.USD+EUR+SEK.NOK.SP?format=csv&lastNObservations=8&locale=en",
+    "https://data.norges-bank.no/api/data/EXR/B.USD+EUR+SEK+I44.NOK.SP?format=csv&lastNObservations=8&locale=en",
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) throw new Error(`Norges Bank svarte ${res.status}`);
@@ -78,7 +93,18 @@ async function getFx(): Promise<Fx[]> {
   const cols = head.split(";");
   const at = (name: string) => cols.indexOf(name);
   const rows = lines.map((l) => l.split(";"));
-  return (["USD", "EUR", "SEK"] as const).map((code) => {
+  const series = (code: string) =>
+    rows
+      .filter((r) => r[at("BASE_CUR")] === code)
+      .map((r) => ({ date: r[at("TIME_PERIOD")], value: Number(r[at("OBS_VALUE")]), mult: Number(r[at("UNIT_MULT")]) }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  const weekRef = (obs: { date: string; value: number }[]) => {
+    const last = obs[obs.length - 1];
+    const weekAgo = ymd(new Date(new Date(last.date).getTime() - 7 * 86400_000));
+    return [...obs].reverse().find((o) => o.date <= weekAgo);
+  };
+
+  const fx = (["USD", "EUR", "SEK"] as const).map((code) => {
     const obs = rows
       .filter((r) => r[at("BASE_CUR")] === code)
       .map((r) => ({ date: r[at("TIME_PERIOD")], value: Number(r[at("OBS_VALUE")]), mult: Number(r[at("UNIT_MULT")]) }))
@@ -94,9 +120,23 @@ async function getFx(): Promise<Fx[]> {
       date: last.date,
       changeDay: pct(last.value, obs[obs.length - 2]?.value),
       changeWeek: pct(last.value, ref?.value),
+      kroneDay: kronePct(last.value, obs[obs.length - 2]?.value),
+      kroneWeek: kronePct(last.value, ref?.value),
       fetchedAt: fxAt,
     };
   });
+
+  const i44 = series("I44");
+  const lastI = i44[i44.length - 1];
+  const krone = lastI && {
+    value: lastI.value,
+    date: lastI.date,
+    // Indeksen er «kroner per kurv»: lavere = sterkere krone
+    kroneDay: kronePct(lastI.value, i44[i44.length - 2]?.value),
+    kroneWeek: kronePct(lastI.value, weekRef(i44)?.value),
+    fetchedAt: fxAt,
+  };
+  return { fx, krone };
 }
 
 export async function getMarkets(): Promise<MarketsData> {
@@ -108,7 +148,8 @@ export async function getMarkets(): Promise<MarketsData> {
   if (failed.length === 2) throw new Error(failed.join("; "));
   return {
     metals: metals.status === "fulfilled" ? metals.value : [],
-    fx: fx.status === "fulfilled" ? fx.value : [],
+    fx: fx.status === "fulfilled" ? fx.value.fx : [],
+    krone: fx.status === "fulfilled" ? fx.value.krone : undefined,
     failed: failed.length ? failed : undefined,
   };
 }

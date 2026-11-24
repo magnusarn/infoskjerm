@@ -140,10 +140,11 @@ export function demoData(slide: Slide): unknown {
           { code: "XAG", name: "Sølv", price: 13365, unit: "kg", changeToday: 0.03, changeWeek: -9.2, history: hist(13000), fetchedAt: iso(-1) },
         ],
         fx: [
-          { code: "USD", label: "1 USD", rate: 9.8076, date: day(-1), changeDay: 0.56, changeWeek: 1.1, fetchedAt: iso(-20) },
-          { code: "EUR", label: "1 EUR", rate: 10.7285, date: day(-1), changeDay: 0.1, changeWeek: 0.4, fetchedAt: iso(-20) },
-          { code: "SEK", label: "100 SEK", rate: 95.47, date: day(-1), changeDay: -0.13, changeWeek: -0.2, fetchedAt: iso(-20) },
+          { code: "USD", label: "1 USD", rate: 9.8076, date: day(-1), changeDay: 0.56, changeWeek: 1.1, kroneDay: -0.56, kroneWeek: -1.09, fetchedAt: iso(-20) },
+          { code: "EUR", label: "1 EUR", rate: 10.7285, date: day(-1), changeDay: 0.1, changeWeek: 0.4, kroneDay: -0.1, kroneWeek: -0.4, fetchedAt: iso(-20) },
+          { code: "SEK", label: "100 SEK", rate: 95.47, date: day(-1), changeDay: -0.13, changeWeek: -0.2, kroneDay: 0.13, kroneWeek: 0.2, fetchedAt: iso(-20) },
         ],
+        krone: { value: 110.98, date: day(-1), kroneDay: -0.22, kroneWeek: -1.3, fetchedAt: iso(-20) },
       };
     }
     default:

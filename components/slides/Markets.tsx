@@ -1,14 +1,28 @@
-import type { MarketsData, Metal, Fx } from "@/lib/sources/markets";
+import type { MarketsData, Metal, Fx, KroneIndex } from "@/lib/sources/markets";
 import { hhmm, nf } from "../format";
 
-function Change({ label, value }: { label: string; value: number | null }) {
+function Change({ label, value, neutral = false }: { label: string; value: number | null; neutral?: boolean }) {
   if (value === null) return null;
   const up = value >= 0;
   return (
     <div className="mk-change">
       <span className="mk-change-label">{label}</span>
-      <span className={up ? "mk-delta up" : "mk-delta down"}>
+      <span className={neutral ? "mk-delta neutral" : up ? "mk-delta up" : "mk-delta down"}>
         {up ? "▲" : "▼"} {nf(Math.abs(value), 2)} %
+      </span>
+    </div>
+  );
+}
+
+/** Kronens utvikling: grønn/blågrønn når kronen styrker seg */
+function Krone({ label, value }: { label: string; value: number | null }) {
+  if (value === null) return null;
+  const stronger = value >= 0;
+  return (
+    <div className="mk-krone-line">
+      <span className="mk-change-label">{label}</span>
+      <span className={stronger ? "mk-delta up" : "mk-delta down"}>
+        {stronger ? "▲ sterkere" : "▼ svakere"} {nf(Math.abs(value), 2)} %
       </span>
     </div>
   );
@@ -67,15 +81,34 @@ function FxCard({ f }: { f: Fx }) {
         {nf(f.rate, f.code === "SEK" ? 2 : 4)} <span className="mk-unit">kr</span>
       </div>
       <div className="mk-changes">
-        <Change label="Dag" value={f.changeDay} />
-        <Change label="Uke" value={f.changeWeek} />
+        <Change label="Dag" value={f.changeDay} neutral />
+        <Change label="Uke" value={f.changeWeek} neutral />
+      </div>
+      <div className="mk-krone">
+        <Krone label="Kronen" value={f.kroneDay} />
+      </div>
+    </section>
+  );
+}
+
+function KroneCard({ k }: { k: KroneIndex }) {
+  return (
+    <section className="mk-fx mk-krone-card card">
+      <div className="label">Kronekurs (I-44)</div>
+      <div className="mk-krone-big">
+        <Krone label="I dag" value={k.kroneDay} />
+        <Krone label="Siste uke" value={k.kroneWeek} />
+      </div>
+      <div className="mk-fx-note">
+        Norges Bank · gjelder{" "}
+        {new Date(k.date + "T12:00:00").toLocaleDateString("nb-NO", { day: "numeric", month: "long" })} · hentet kl.{" "}
+        {hhmm(k.fetchedAt)}
       </div>
     </section>
   );
 }
 
 export default function MarketsView({ d, title }: { d: MarketsData; title: string }) {
-  const fxDate = d.fx[0]?.date;
   return (
     <div className="markets">
       <h1 className="title">{title}</h1>
@@ -89,15 +122,7 @@ export default function MarketsView({ d, title }: { d: MarketsData; title: strin
           {d.fx.map((f) => (
             <FxCard key={f.code} f={f} />
           ))}
-          {fxDate && (
-            <div className="mk-fx-note">
-              Valutakurser fra Norges Bank
-              <br />
-              Gjelder {new Date(fxDate + "T12:00:00").toLocaleDateString("nb-NO", { day: "numeric", month: "long" })}
-              <br />
-              Hentet kl. {hhmm(d.fx[0].fetchedAt)}
-            </div>
-          )}
+          {d.krone && <KroneCard k={d.krone} />}
         </div>
       )}
     </div>
