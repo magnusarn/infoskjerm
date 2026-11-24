@@ -9,6 +9,7 @@ import CalendarView from "./slides/Calendar";
 import NewsView from "./slides/News";
 import Ga4View from "./slides/Ga4";
 import MetaView from "./slides/Meta";
+import MarketsView from "./slides/Markets";
 import { IframeView, YoutubeView, ImageView, MessageView } from "./slides/Embeds";
 
 type Props = {
@@ -29,6 +30,7 @@ const SOURCES: Record<string, string> = {
   news: "",
   ga4: "Kilde: Google Analytics 4",
   meta: "Kilde: Meta Ads",
+  markets: "Metallpriser: K.A. Rasmussen (LME) · Valuta: Norges Bank",
 };
 
 export default function Player({ screenId, name, slides, query, unprotected, only }: Props) {
@@ -180,6 +182,8 @@ function SlideView({ slide, entry, active }: { slide: Slide; entry?: Entry; acti
       return <Ga4View d={d} title={slide.title} />;
     case "meta":
       return <MetaView d={d} title={slide.title} />;
+    case "markets":
+      return <MarketsView d={d} title={slide.title} />;
     case "iframe":
       return <IframeView slide={slide} />;
     case "youtube":

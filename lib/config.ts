@@ -53,6 +53,7 @@ export const SCREENS: Record<string, Screen> = {
       { type: "weather", seconds: 20, ...VAER },
       { ...AVGANGER, seconds: 25 },
       { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
+      { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
     ],
   },
 
@@ -74,6 +75,7 @@ export const SCREENS: Record<string, Screen> = {
       { type: "youtube", seconds: 60, videoIdEnv: "YOUTUBE_VIDEO_ID" },
       { ...AVGANGER, seconds: 20 },
       { type: "weather", seconds: 15, ...VAER },
+      { type: "markets", seconds: 20, title: "Dagens metallpriser" },
       { type: "news", seconds: 20, title: "Siste nytt", feeds: [NRK] },
     ],
   },

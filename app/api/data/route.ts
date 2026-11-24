@@ -8,6 +8,7 @@ import { getCalendar } from "@/lib/sources/calendar";
 import { getNews } from "@/lib/sources/news";
 import { getGa4 } from "@/lib/sources/ga4";
 import { getMeta } from "@/lib/sources/meta";
+import { getMarkets } from "@/lib/sources/markets";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,8 @@ export async function GET(req: NextRequest) {
           return getGa4();
         case "meta":
           return getMeta();
+        case "markets":
+          return getMarkets();
         default:
           return null;
       }
