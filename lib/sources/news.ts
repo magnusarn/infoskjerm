@@ -35,7 +35,12 @@ export async function getNews(s: NewsSlide): Promise<NewsData> {
   const results = await Promise.allSettled(s.feeds.map(readFeed));
   const time = (i: NewsItem) => (i.published ? new Date(i.published).getTime() || 0 : 0);
   const lists = results.map((r) =>
-    r.status === "fulfilled" ? r.value.items.filter((i) => i.title).sort((a, b) => time(b) - time(a)) : []
+    r.status === "fulfilled"
+      ? r.value.items
+          // Skjul saker eldre enn 3 døgn (saker uten dato beholdes)
+          .filter((i) => i.title && (!time(i) || Date.now() - time(i) < 3 * 86400_000))
+          .sort((a, b) => time(b) - time(a))
+      : []
   );
   const failed = results.flatMap((r, i) => (r.status === "rejected" ? [`${s.feeds[i].name} (${r.reason?.message})`] : []));
   const used = Object.fromEntries(

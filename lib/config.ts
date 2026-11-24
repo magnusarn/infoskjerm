@@ -38,15 +38,8 @@ const AVGANGER = {
 
 // Nyhetskilder (RSS). Flere URL-er = reserver som prøves i rekkefølge.
 const NRK = { name: "NRK", urls: ["https://www.nrk.no/toppsaker.rss"] };
-const NRK_OKONOMI = {
-  name: "NRK",
-  urls: [
-    "https://www.nrk.no/okonomi/toppsaker.rss",
-    "https://www.nrk.no/okonomi/siste.rss",
-    "https://www.nrk.no/nyheter/okonomi/siste.rss",
-    "https://www.nrk.no/nyttig/toppsaker.rss",
-  ],
-};
+// NRK har ingen egen økonomifeed – E24 brukes for økonominytt
+const E24 = { name: "E24", urls: ["https://e24.no/rss2/", "https://e24.no/rss", "https://e24.no/rss2/?seksjon=boers-og-finans"] };
 const FINANSAVISEN = {
   name: "Finansavisen",
   urls: ["https://ws.finansavisen.no/api/articles.rss", "https://www.finansavisen.no/rss"],
@@ -59,7 +52,7 @@ export const SCREENS: Record<string, Screen> = {
     slides: [
       { type: "weather", seconds: 20, ...VAER },
       { ...AVGANGER, seconds: 25 },
-      { type: "news", seconds: 25, title: "Økonominytt", feeds: [NRK_OKONOMI, FINANSAVISEN] },
+      { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
     ],
   },
 
