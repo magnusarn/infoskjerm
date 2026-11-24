@@ -83,7 +83,12 @@ export function demoData(slide: Slide): unknown {
           "Eksempel: Kronen styrker seg mot euro",
           "Eksempel: Julehandelen ventes å slå fjorårets rekord",
           "Eksempel: Boligprisene flater ut i Oslo",
-        ].map((title, i) => ({ title, source: names[i % names.length], published: iso(-i * 37) })),
+        ].map((title, i) => ({
+          title,
+          lead: "Eksempel på ingress: en kort oppsummering av saken som gir leseren nok kontekst til å forstå hva den handler om, uten å måtte lese hele artikkelen.",
+          source: names[i % names.length],
+          published: iso(-i * 37),
+        })),
       };
     }
     case "ga4":

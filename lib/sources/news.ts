@@ -1,11 +1,23 @@
 import { XMLParser } from "fast-xml-parser";
 import type { Feed, NewsSlide } from "../types";
 
-export type NewsItem = { title: string; source: string; published?: string };
+export type NewsItem = { title: string; lead?: string; source: string; published?: string };
 export type NewsData = { sources: string[]; items: NewsItem[]; failed?: string[]; used?: Record<string, string> };
 
 const parser = new XMLParser({ ignoreAttributes: false });
 const text = (v: any) => (typeof v === "string" ? v : v?.["#text"] ?? "");
+/** Ingress: fjern HTML og entiteter, og kort ned */
+const clean = (v: any) =>
+  String(text(v) ?? "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
 
 async function readFeed(feed: Feed): Promise<{ url: string; items: NewsItem[] }> {
   const errors: string[] = [];
@@ -19,6 +31,7 @@ async function readFeed(feed: Feed): Promise<{ url: string; items: NewsItem[] }>
       const list = Array.isArray(raw) ? raw : [raw];
       const items = list.slice(0, 15).map((i: any) => ({
         title: text(i.title).trim(),
+        lead: clean(i.description ?? i.summary ?? i["content:encoded"]) || undefined,
         source: feed.name,
         published: i.pubDate || i.published || i.updated || i["dc:date"] || undefined,
       }));
