@@ -48,7 +48,7 @@ export function demoData(slide: Slide): unknown {
           const mode = b.modes?.[0] ?? "bus";
           const rows: [string, string][] =
             mode === "rail"
-              ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE10", "Lillehammer"], ["L1", "Lillestrøm"], ["FLY2", "Oslo lufthavn"], ["R14", "Kongsvinger"], ["L2", "Ski"]]
+              ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE10", "Lillehammer"], ["L1", "Lillestrøm"], ["FLY2", "Oslo lufthavn"], ["R14", "Kongsvinger"], ["L2", "Ski"], ["R13", "Drammen"], ["FLY1", "Oslo lufthavn"]]
               : mode === "tram"
                 ? [["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"]]
                 : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"], ["40", "Øvre Sogn"], ["13B", "Lilleaker"]];
@@ -62,7 +62,8 @@ export function demoData(slide: Slide): unknown {
                 : mode === "bus"
                   ? ["Holdeplass Ullern retning Lilleaker er flyttet cirka 50 meter bakover på grunn av vegarbeid i området fram til mars"]
                   : ["Færre vogner", "Innstilte avganger mellom Asker og Lysaker"],
-            departures: rows.slice(0, b.max ?? 8).map(([line, destination], i) => ({
+            max: b.max,
+            departures: rows.slice(0, (b.max ?? 8) + 2).map(([line, destination], i) => ({
               line,
               mode,
               destination,

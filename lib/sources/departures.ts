@@ -30,6 +30,8 @@ export type BoardData = {
   departures: Departure[];
   notices: string[];
   walkMinutes?: number;
+  /** Antall avganger man rekker som skal vises (de man ikke rekker kommer i tillegg, i halv størrelse) */
+  max?: number;
   trips?: TripOption[];
   toName?: string;
 };
@@ -169,7 +171,7 @@ async function getBoardAt(board: Board, stopId: string): Promise<BoardData & { _
   });
 
   // Avvik: meldinger på holdeplassen + på avgangene som faktisk vises (etter filter)
-  const shown = calls.slice(0, board.max ?? 8);
+  const shown = calls.slice(0, (board.max ?? 8) + 4);
   const seen = new Set<string>();
   const notices: string[] = [];
   for (const sit of [...(sp.situations ?? []), ...shown.flatMap((c: any) => c.situations ?? [])]) {
@@ -185,7 +187,9 @@ async function getBoardAt(board: Board, stopId: string): Promise<BoardData & { _
     title: board.title,
     stopName: sp.name,
     notices: notices.slice(0, 2),
-    departures: calls.slice(0, board.max ?? 8).map((c) => ({
+    max: board.max ?? 8,
+    // Hent noen ekstra – de man ikke rekker vises i tillegg, i halv størrelse
+    departures: calls.slice(0, (board.max ?? 8) + 4).map((c) => ({
       line: c.serviceJourney?.line?.publicCode ?? "",
       mode: c.serviceJourney?.line?.transportMode ?? "bus",
       destination: c.destinationDisplay?.frontText ?? "",

@@ -54,7 +54,11 @@ function Walk({ minutes }: { minutes?: number }) {
 
 function BoardView({ b, compact }: { b: BoardData; compact: boolean }) {
   const now = Date.now();
-  const list = b.departures.filter((x) => new Date(x.expected).getTime() > now - 30_000);
+  const upcoming = b.departures.filter((x) => new Date(x.expected).getTime() > now - 30_000);
+  const minsTo = (x: { expected: string }) => (new Date(x.expected).getTime() - now) / 60_000;
+  const tooLate = (x: { expected: string }) => b.walkMinutes !== undefined && Math.round(minsTo(x)) < b.walkMinutes;
+  // Maks 3 avganger man ikke rekker (små), deretter «max» avganger man rekker
+  const list = [...upcoming.filter(tooLate).slice(-3), ...upcoming.filter((x) => !tooLate(x)).slice(0, b.max ?? 8)];
   return (
     <section className={compact ? "board card compact" : "board card"}>
       {compact && (
