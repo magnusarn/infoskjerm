@@ -156,6 +156,7 @@ export function demoData(slide: Slide): unknown {
         snowDepthWeekAgo: 15.7,
         newSnow3d: 0,
         condition: "Tørr snø",
+        wax: { grip: "Blå klister", glide: "middels (fiolett)", why: "Gammel, frossen snø · −6 °C" },
         days: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({ date: day(i - 7), snowDepth: [15.7, 15.4, 15.2, 15, 14.8, 14.6, 14.5, 14.4, 14.3, 15.5, 15.4][i], forecast: i > 7 })),
         weather: {
           place: slide.place,

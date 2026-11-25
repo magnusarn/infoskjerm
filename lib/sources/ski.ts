@@ -7,6 +7,7 @@
 import type { SkiSlide } from "../types";
 import { getWeather, type WeatherData } from "./weather";
 
+export type Wax = { grip: string; glide: string; why: string };
 export type SkiDay = { date: string; snowDepth: number | null; forecast: boolean };
 export type SkiData =
   | {
@@ -17,6 +18,7 @@ export type SkiData =
       newSnow3d: number;
       condition: string;
       days: SkiDay[];
+      wax?: Wax;
       weather?: WeatherData;
       webcam?: { src: string; label: string; credit: string; takenAt?: string };
     }
@@ -32,6 +34,29 @@ async function nve(s: SkiSlide, theme: string, from: string, to: string): Promis
   if (!res.ok) throw new Error(`NVE svarte ${res.status} (${theme})`);
   const j = await res.json();
   return (j.Data as number[]).map((v) => (v === NODATA || v === j.NoDataValue ? null : v));
+}
+
+/**
+ * Veiledende smøretips etter vanlig fargesystem for festevoks (grønn → blå → ekstra blå → fiolett → rød → klister).
+ * Grunnlag: lufttemperatur nå, om det har kommet nysnø, og om snøen har vært våt den siste uka (omdannet snø).
+ */
+function waxTip(temp: number, newSnow3d: number, wetNow: boolean, wasWetLastWeek: boolean): Wax {
+  const t = `${temp < 0 ? "−" : ""}${Math.abs(Math.round(temp))} °C`;
+  const glide = temp < -8 ? "kald (grønn/blå)" : temp < -2 ? "middels (fiolett)" : "varm (rød/gul)";
+
+  if (wetNow || temp > 1) return { grip: "Universal- eller rød klister", glide, why: `Våt snø · ${t}` };
+  const fresh = newSnow3d >= 1;
+  if (!fresh && wasWetLastWeek) {
+    // Snøen har tint og frosset igjen → grovkornet/isete
+    if (temp <= -3) return { grip: "Blå klister", glide, why: `Gammel, frossen snø · ${t}` };
+    return { grip: "Fiolett klister", glide, why: `Gammel, omdannet snø · ${t}` };
+  }
+  const kind = fresh ? "Ny snø" : "Finkornet snø";
+  if (temp <= -10) return { grip: "Grønn festevoks", glide, why: `${kind} · ${t}` };
+  if (temp <= -3) return { grip: "Blå festevoks", glide, why: `${kind} · ${t}` };
+  if (temp <= -1) return { grip: "Ekstra blå festevoks", glide, why: `${kind} · ${t}` };
+  if (temp <= 0) return { grip: "Fiolett festevoks", glide, why: `${kind} · ${t}` };
+  return { grip: "Rød festevoks", glide, why: `${kind} · ${t}` };
 }
 
 function describe(lwc: number | null, depth: number) {
@@ -79,7 +104,19 @@ export async function getSki(s: SkiSlide, origin: { screen: string; i: number })
       : Promise.resolve(undefined),
   ]);
 
+  const temp = weather?.now.temp;
+  const wax =
+    temp !== undefined && depth >= 1
+      ? waxTip(
+          temp,
+          fsw3d[todayIdx] ?? 0,
+          (lwc[todayIdx] ?? 0) >= 3,
+          lwc.slice(0, todayIdx).some((v) => (v ?? 0) > 0.5)
+        )
+      : undefined;
+
   return {
+    wax,
     place: s.place,
     altitude: s.altitude,
     snowDepth: depth,

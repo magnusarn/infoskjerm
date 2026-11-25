@@ -15,6 +15,14 @@ export default function SkiView({ d, title }: { d: D; title: string }) {
           <section className="ski-cam card">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={d.webcam.src} alt={d.webcam.label} />
+            {d.wax && (
+              <div className="ski-wax">
+                <div className="label">Smøretips</div>
+                <div className="ski-wax-grip">{d.wax.grip}</div>
+                <div className="ski-wax-sub">{d.wax.why}</div>
+                <div className="ski-wax-sub">Glider: {d.wax.glide}</div>
+              </div>
+            )}
             <div className="ski-cam-caption">
               <span>{d.webcam.label}</span>
               <span>
