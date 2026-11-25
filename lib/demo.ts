@@ -148,6 +148,23 @@ export function demoData(slide: Slide): unknown {
         krone: { value: 110.98, date: day(-1), kroneDay: -0.22, kroneWeek: -1.3, fetchedAt: iso(-20) },
       };
     }
+    case "ski":
+      return {
+        place: slide.place,
+        altitude: slide.altitude,
+        snowDepth: 14.4,
+        snowDepthWeekAgo: 15.7,
+        newSnow3d: 0,
+        condition: "Tørr snø",
+        days: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => ({ date: day(i - 7), snowDepth: [15.7, 15.4, 15.2, 15, 14.8, 14.6, 14.5, 14.4, 14.3, 15.5, 15.4][i], forecast: i > 7 })),
+        weather: {
+          place: slide.place,
+          now: { temp: -5.6, wind: 2.1, symbol: "clearsky_day", precip: 0 },
+          hours: [],
+          days: [1, 2, 3].map((n, i) => ({ date: day(n), min: -9 + i, max: -4 + i, symbol: ["clearsky_day", "lightsnow", "cloudy"][i], precip: [0, 1.4, 0][i] })),
+        },
+        webcam: slide.webcam && { src: `/api/webcam?screen=kontor-1&i=4`, label: slide.webcam.label, credit: slide.webcam.credit, takenAt: iso(-8) },
+      };
     default:
       return null;
   }

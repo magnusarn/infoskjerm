@@ -9,6 +9,7 @@ import { getNews } from "@/lib/sources/news";
 import { getGa4 } from "@/lib/sources/ga4";
 import { getMeta } from "@/lib/sources/meta";
 import { getMarkets } from "@/lib/sources/markets";
+import { getSki } from "@/lib/sources/ski";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,8 @@ export async function GET(req: NextRequest) {
           return getMeta();
         case "markets":
           return getMarkets();
+        case "ski":
+          return getSki(slide, { screen: q.get("screen")!, i: Number(q.get("i")) });
         default:
           return null;
       }

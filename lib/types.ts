@@ -1,6 +1,6 @@
 type Base = { seconds: number };
 
-export type WeatherSlide = Base & { type: "weather"; place: string; lat: number; lon: number };
+export type WeatherSlide = Base & { type: "weather"; place: string; lat: number; lon: number; altitude?: number };
 /** Én avgangstavle: én holdeplass, eventuelt filtrert på transportmiddel og retning */
 export type Board = {
   title: string;
@@ -41,6 +41,18 @@ export type YoutubeSlide = Base & {
   videoIdEnv?: string;
 };
 export type ImageSlide = Base & { type: "image"; src: string; alt?: string };
+/** Skiføre: snø fra NVE (seNorge), vær fra MET og webkamerabilde */
+export type SkiSlide = Base & {
+  type: "ski";
+  title: string;
+  place: string;
+  lat: number;
+  lon: number;
+  altitude: number;
+  /** UTM sone 33 (EPSG:25833) – NVE sitt rutenett */
+  utm: { x: number; y: number };
+  webcam?: { url: string; label: string; credit: string };
+};
 export type MarketsSlide = Base & { type: "markets"; title: string };
 export type MessageSlide = Base & { type: "message"; heading: string; text?: string };
 
@@ -55,12 +67,13 @@ export type Slide =
   | YoutubeSlide
   | ImageSlide
   | MessageSlide
-  | MarketsSlide;
+  | MarketsSlide
+  | SkiSlide;
 
 export type Screen = { name: string; private: boolean; slides: Slide[] };
 
 /** Slide-typer som henter data fra /api/data */
-export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets"] as const;
+export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski"] as const;
 
 /** Hvor ofte (sekunder) data for hver type hentes på nytt i nettleseren */
 export const REFRESH: Record<string, number> = {
@@ -71,4 +84,5 @@ export const REFRESH: Record<string, number> = {
   ga4: 15 * 60,
   meta: 30 * 60,
   markets: 2 * 60,
+  ski: 10 * 60,
 };

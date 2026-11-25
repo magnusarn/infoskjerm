@@ -24,7 +24,8 @@ const osloDate = (d: Date) => d.toLocaleDateString("sv-SE", { timeZone: "Europe/
 const osloHour = (d: Date) => Number(d.toLocaleString("en-GB", { timeZone: "Europe/Oslo", hour: "2-digit", hourCycle: "h23" }));
 
 export async function getWeather(s: WeatherSlide): Promise<WeatherData> {
-  const url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${s.lat.toFixed(4)}&lon=${s.lon.toFixed(4)}`;
+  const alt = s.altitude !== undefined ? `&altitude=${Math.round(s.altitude)}` : "";
+  const url = `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${s.lat.toFixed(4)}&lon=${s.lon.toFixed(4)}${alt}`;
   // MET: minst 30 min caching for steder i Norden
   const res = await fetch(url, { headers: { "User-Agent": UA }, next: { revalidate: 1800 } });
   if (!res.ok) throw new Error(`MET svarte ${res.status}`);

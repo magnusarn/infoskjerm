@@ -55,6 +55,21 @@ export const SCREENS: Record<string, Screen> = {
       { ...AVGANGER, seconds: 25 },
       { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
       { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
+      {
+        type: "ski",
+        seconds: 25,
+        title: "Skiføre i marka",
+        place: "Tryvann",
+        lat: 59.9972,
+        lon: 10.6689,
+        altitude: 418,
+        utm: { x: 258516, y: 6659009 },
+        webcam: {
+          url: "https://www.yr.no/webcams/1/600/tryvann/1.jpg",
+          label: "Tryvann, retning nordvest",
+          credit: "Webkamera: MET Norway / Yr",
+        },
+      },
     ],
   },
 
