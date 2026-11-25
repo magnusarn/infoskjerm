@@ -66,8 +66,9 @@ export async function getSki(s: SkiSlide, origin: { screen: string; i: number })
   const [weather, webcam] = await Promise.all([
     getWeather({ type: "weather", seconds: 0, place: s.place, lat: s.lat, lon: s.lon, altitude: s.altitude }).catch(() => undefined),
     s.webcam
-      ? fetch(s.webcam.url, { method: "HEAD", next: { revalidate: 300 } })
-          .then((r) => r.headers.get("last-modified"))
+      ? // Samme forespørsel som /api/webcam bruker, så svaret deles i cachen
+        fetch(s.webcam.url, { next: { revalidate: 300 } })
+          .then((r) => r.headers.get("last-modified") ?? r.headers.get("date"))
           .catch(() => null)
           .then((lm) => ({
             src: `/api/webcam?screen=${origin.screen}&i=${origin.i}&t=${lm ? Date.parse(lm) : Date.now()}`,
