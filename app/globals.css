@@ -356,3 +356,26 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .home ul { margin-top: 24px; padding-left: 24px; }
 .home a { color: var(--text); }
 .home code { background: var(--card); padding: 2px 8px; border-radius: 6px; }
+
+/* Tog/trikk/buss man ikke rekker: halv høyde, så de som kommer får plass */
+.board.compact .dep.unreachable { flex: 0 0 auto; min-height: 0; height: 34px; max-height: 34px; font-size: 22px; }
+.board.compact .dep.unreachable .line { font-size: 18px; padding: 0 8px; }
+.board.compact .dep.unreachable small { display: none; }
+.board-col.stacked .board.compact .dep.unreachable { flex: 0 0 30px; height: 30px; min-height: 30px; max-height: 30px; font-size: 21px; }
+
+/* Slank «Neste tog til Hamar» */
+.board-col.stacked .trip-board { padding: 14px 24px 10px !important; }
+.board-col.stacked .trip-board .board-head { padding-bottom: 6px; }
+.board-col.stacked .trip-board .board-title { font-size: 26px; }
+.board-col.stacked .trip-board .walk { padding: 2px 10px; }
+.board-col.stacked .trip-board .walk-min { font-size: 24px; }
+.board-col.stacked .trip-board .walk-icon { font-size: 20px; }
+.board-col.stacked .trip { padding: 6px 0 4px; }
+.board-col.stacked .trip-dep, .board-col.stacked .trip-arr { font-size: 30px; }
+.board-col.stacked .trip-arrow { font-size: 22px; }
+.board-col.stacked .trip-in { font-size: 22px; }
+.board-col.stacked .trip-meta { font-size: 18px; margin-top: 0; }
+.board-col.stacked .board.compact .trip-line { font-size: 16px; padding: 0 8px; }
+.board-col.stacked .trip-next { font-size: 18px; padding: 4px 0 0; }
+.board-col.stacked .trip-next-label { font-size: 15px; }
+.board-col.stacked .board.compact .dep { flex: 0 0 50px; min-height: 50px; max-height: 50px; }

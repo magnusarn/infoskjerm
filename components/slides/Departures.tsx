@@ -128,7 +128,6 @@ function TripView({ b }: { b: BoardData }) {
       <header className="board-head">
         <div>
           <div className="board-title">{b.title}</div>
-          <div className="board-stop">fra {b.stopName}</div>
         </div>
         <Walk minutes={b.walkMinutes} />
       </header>

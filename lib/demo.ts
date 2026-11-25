@@ -50,8 +50,8 @@ export function demoData(slide: Slide): unknown {
             mode === "rail"
               ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE10", "Lillehammer"], ["L1", "Lillestrøm"], ["FLY2", "Oslo lufthavn"], ["R14", "Kongsvinger"], ["L2", "Ski"]]
               : mode === "tram"
-                ? [["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"]]
-                : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"], ["40", "Øvre Sogn"]];
+                ? [["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"]]
+                : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"], ["40", "Øvre Sogn"], ["13B", "Lilleaker"]];
           return {
             title: b.title,
             stopName: b.stopId,
@@ -66,8 +66,8 @@ export function demoData(slide: Slide): unknown {
               line,
               mode,
               destination,
-              aimed: iso(2 + i * 4),
-              expected: iso(2 + i * 4 + (i === 1 ? 2 : 0)),
+              aimed: iso(1 + i * 3),
+              expected: iso(1 + i * 3 + (i === 1 ? 2 : 0)),
               realtime: i !== 4,
               cancelled: false,
               platform: String((i % 2) + 1),
