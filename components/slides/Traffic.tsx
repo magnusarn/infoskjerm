@@ -9,14 +9,23 @@ export default function TrafficView({ d, title }: { d: D; title: string }) {
     <div className="traffic">
       <h1 className="title">{title}</h1>
       <div className={hasMessages ? "tr-grid" : "tr-grid only-trips"}>
-        <section className="tr-trips">
+        <section className={d.trips.length > 4 ? "tr-trips many" : "tr-trips"}>
           {d.trips.map((t) => {
             const level = t.delayMinutes >= 10 ? "heavy" : t.delayMinutes >= 4 ? "some" : "ok";
             return (
               <div className={`tr-trip card ${level}`} key={t.name}>
                 <div className="label">Til {t.name}</div>
                 <div className="tr-time">
-                  {t.minutes} <span className="mk-unit">min</span>
+                  {t.minutes >= 60 ? (
+                    <>
+                      {Math.floor(t.minutes / 60)} <span className="mk-unit">t</span> {t.minutes % 60}{" "}
+                      <span className="mk-unit">min</span>
+                    </>
+                  ) : (
+                    <>
+                      {t.minutes} <span className="mk-unit">min</span>
+                    </>
+                  )}
                 </div>
                 <div className="tr-sub">
                   {t.delayMinutes >= 1 ? (

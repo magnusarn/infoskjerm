@@ -193,8 +193,11 @@ export function demoData(slide: Slide): unknown {
           { name: "Lørenskog", minutes: 24, normalMinutes: 20, delayMinutes: 4, km: 20.1 },
           { name: "Ski", minutes: 29, normalMinutes: 27, delayMinutes: 2, km: 31.5 },
           { name: "Drammen", minutes: 49, normalMinutes: 35, delayMinutes: 14, km: 37.8 },
+          { name: "Hamar", minutes: 98, normalMinutes: 95, delayMinutes: 3, km: 128.4 },
+          { name: "Nydalen", minutes: 14, normalMinutes: 12, delayMinutes: 2, km: 7.9 },
+          { name: "Slemdal skole", minutes: 9, normalMinutes: 9, delayMinutes: 0, km: 3.6 },
         ],
-        messages: [
+        messages: slide.title.includes("uten") ? null : [
           { road: "E18", type: "Kø", text: "E18 Lysaker – Sandvika, retning Drammen: Kø på grunn av stor trafikk.", updated: iso(-6) },
           { road: "Ring 3", type: "Vegarbeid", text: "Rv150 Ring 3 Ullevål – Tåsen: Ett felt stengt i retning Ryen på grunn av vegarbeid.", updated: iso(-48) },
           { road: "E6", type: "Ulykke", text: "E6 Klemetsrud, retning sør: Trafikkulykke, vis hensyn.", updated: iso(-15) },

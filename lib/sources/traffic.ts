@@ -21,7 +21,7 @@ async function getTrips(s: TrafficSlide, key: string): Promise<Trip[]> {
       const url =
         `https://api.tomtom.com/routing/1/calculateRoute/${s.from.lat},${s.from.lon}:${d.lat},${d.lon}/json` +
         `?key=${key}&traffic=true&travelMode=car&routeType=fastest&computeTravelTimeFor=all`;
-      const res = await fetch(url, { next: { revalidate: 300 } });
+      const res = await fetch(url, { next: { revalidate: 360 } }); // 7 mål × 10/time ≈ 1 700 kall/døgn (TomTom-grense 2 500)
       if (!res.ok) throw new Error(`TomTom svarte ${res.status}`);
       const sum = (await res.json()).routes?.[0]?.summary;
       if (!sum) throw new Error(`Fant ingen rute til ${d.name}`);

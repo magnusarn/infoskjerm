@@ -86,6 +86,9 @@ export const SCREENS: Record<string, Screen> = {
           { name: "Lørenskog", lat: 59.9285, lon: 10.958 },
           { name: "Ski", lat: 59.7194, lon: 10.8357 },
           { name: "Drammen", lat: 59.74, lon: 10.204 },
+          { name: "Hamar", lat: 60.801473, lon: 11.029342 }, // K.A. Rasmussen, Birkebeinervegen 24
+          { name: "Nydalen", lat: 59.949063, lon: 10.766848 },
+          { name: "Slemdal skole", lat: 59.95149, lon: 10.69281 },
         ],
         roads: [
           { label: "Ring 3", match: "ring ?3|\\b(rv|riksveg|riksvei) ?150\\b|(^|\\D)150(\\D|$)" },

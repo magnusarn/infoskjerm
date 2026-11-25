@@ -280,6 +280,13 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .tr-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; }
 .tr-grid.only-trips { grid-template-columns: 1fr; }
 .tr-trips { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 24px; }
+.tr-trips.many { grid-template-rows: none; grid-auto-rows: 1fr; gap: 16px; }
+.tr-trips.many .tr-trip { padding: 12px 22px; border-left-width: 5px; }
+.tr-trips.many .label { font-size: 20px; margin-bottom: 4px; }
+.tr-trips.many .tr-time { font-size: 50px; }
+.tr-trips.many .tr-time .mk-unit { font-size: 24px; }
+.tr-trips.many .tr-sub { flex-direction: row; flex-wrap: wrap; gap: 4px 12px; margin-top: 4px; font-size: 19px; }
+.tr-trips.many .tr-delay { font-size: 20px; }
 .tr-trip { padding: 24px 30px; border-left: 6px solid var(--teal); display: flex; flex-direction: column; justify-content: center; }
 .tr-trip.some { border-left-color: var(--gold); }
 .tr-trip.heavy { border-left-color: var(--red); }
@@ -379,3 +386,10 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .board-col.stacked .trip-next { font-size: 18px; padding: 4px 0 0; }
 .board-col.stacked .trip-next-label { font-size: 15px; }
 .board-col.stacked .board.compact .dep { flex: 0 0 50px; min-height: 50px; max-height: 50px; }
+/* Uten trafikkmeldinger: reisetider i fire kolonner over hele bredden */
+.tr-grid.only-trips .tr-trips.many { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.tr-grid.only-trips .tr-trips.many .tr-trip { padding: 22px 28px; }
+.tr-grid.only-trips .tr-trips.many .tr-time { font-size: 72px; }
+.tr-grid.only-trips .tr-trips.many .label { font-size: 22px; }
+.tr-grid.only-trips .tr-trips.many .tr-sub { flex-direction: column; font-size: 22px; }
+.tr-grid.only-trips .tr-trips.many .tr-delay { font-size: 26px; }
