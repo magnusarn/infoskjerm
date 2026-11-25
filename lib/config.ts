@@ -85,6 +85,7 @@ export const SCREENS: Record<string, Screen> = {
         bbox: [59.7, 10.2, 60.0, 11.0], // Oslo, Bærum, Asker, Lillestrøm og Follo
       },
       { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
+      { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
       {
         type: "ski",
         seconds: 25,
