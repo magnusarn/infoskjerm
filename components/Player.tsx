@@ -12,6 +12,7 @@ import MetaView from "./slides/Meta";
 import MarketsView from "./slides/Markets";
 import SkiView from "./slides/Ski";
 import TrafficView from "./slides/Traffic";
+import BuyPricesView from "./slides/BuyPrices";
 import { IframeView, YoutubeView, ImageView, MessageView } from "./slides/Embeds";
 
 type Props = {
@@ -33,6 +34,7 @@ const SOURCES: Record<string, string> = {
   ga4: "Kilde: Google Analytics 4",
   meta: "Kilde: Meta Ads",
   markets: "Metallpriser: K.A. Rasmussen (LME) · Valuta: Norges Bank",
+  buyprices: "Kilde: karasmussen.com/metallpriser",
   traffic: "Reisetid: TomTom · Trafikkmeldinger: Statens vegvesen",
   ski: "Snø: NVE / seNorge (modellberegnet) · Vær og webkamera: MET Norway / Yr",
 };
@@ -264,6 +266,8 @@ function SlideView({ slide, entry, active }: { slide: Slide; entry?: Entry; acti
       return <MetaView d={d} title={slide.title} />;
     case "markets":
       return <MarketsView d={d} title={slide.title} />;
+    case "buyprices":
+      return <BuyPricesView d={d} title={slide.title} />;
     case "traffic":
       return <TrafficView d={d} title={slide.title} />;
     case "ski":

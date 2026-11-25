@@ -13,6 +13,8 @@ export type Board = {
   /** Bare avganger som senere stopper på en av disse holdeplassene (navn), f.eks. ["Nationaltheatret"] */
   towards?: string[];
   max?: number;
+  /** Sett til false for å skjule gangtid (f.eks. en stasjon som ligger langt unna) */
+  walk?: boolean;
 };
 export type DeparturesSlide = Base & {
   type: "departures";
@@ -64,6 +66,8 @@ export type TrafficSlide = Base & {
   /** Område meldingene må ligge innenfor: [minLat, minLon, maxLat, maxLon] */
   bbox: [number, number, number, number];
 };
+/** «I dag kjøper vi for» – innkjøpspriser fra karasmussen.com */
+export type BuyPricesSlide = Base & { type: "buyprices"; title: string; url: string };
 export type MarketsSlide = Base & { type: "markets"; title: string };
 export type MessageSlide = Base & { type: "message"; heading: string; text?: string };
 
@@ -80,12 +84,13 @@ export type Slide =
   | MessageSlide
   | MarketsSlide
   | SkiSlide
-  | TrafficSlide;
+  | TrafficSlide
+  | BuyPricesSlide;
 
 export type Screen = { name: string; private: boolean; slides: Slide[] };
 
 /** Slide-typer som henter data fra /api/data */
-export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski", "traffic"] as const;
+export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski", "traffic", "buyprices"] as const;
 
 /** Hvor ofte (sekunder) data for hver type hentes på nytt i nettleseren */
 export const REFRESH: Record<string, number> = {
@@ -98,4 +103,5 @@ export const REFRESH: Record<string, number> = {
   markets: 2 * 60,
   ski: 10 * 60,
   traffic: 5 * 60,
+  buyprices: 10 * 60,
 };

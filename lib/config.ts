@@ -46,6 +46,19 @@ const FINANSAVISEN = {
   urls: ["https://ws.finansavisen.no/api/articles.rss", "https://www.finansavisen.no/rss"],
 };
 
+// K.A. Rasmussen AS, Birkebeinervegen 24, 2316 Hamar
+const HAMAR = { lat: 60.801473, lon: 11.029342 };
+const AVGANGER_HAMAR = {
+  type: "departures" as const,
+  title: "Avganger i nærheten",
+  walkFrom: HAMAR,
+  boards: [
+    { title: "Buss B25", stopId: "NSR:StopPlace:59711", fallbackStopIds: ["NSR:StopPlace:59708"], modes: ["bus" as const], max: 5 }, // Arvid Østbys veg
+    { title: "Buss B21", stopId: "NSR:StopPlace:10650", modes: ["bus" as const], max: 5 }, // Kornsiloen
+    { title: "Tog", stopId: "NSR:StopPlace:60045", modes: ["rail" as const], max: 5, walk: false }, // Hamar stasjon (ca. 3 km)
+  ],
+};
+
 export const SCREENS: Record<string, Screen> = {
   "kontor-1": {
     name: "Skøyen",
@@ -110,6 +123,17 @@ export const SCREENS: Record<string, Screen> = {
       { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
       { type: "meta", seconds: 25, title: "Meta-annonser – siste 7 dager" },
       { type: "iframe", seconds: 30, title: "Power BI", urlEnv: "POWERBI_EMBED_URL" },
+    ],
+  },
+
+  "resep-hamar": {
+    name: "Hamar",
+    private: false,
+    slides: [
+      { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
+      { type: "youtube", seconds: 90, videoId: "3gt7pYNpj-Y" },
+      { type: "weather", seconds: 15, place: "Hamar", ...HAMAR },
+      { ...AVGANGER_HAMAR, seconds: 20 },
     ],
   },
 

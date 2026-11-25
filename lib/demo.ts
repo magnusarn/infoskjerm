@@ -41,7 +41,7 @@ export function demoData(slide: Slide): unknown {
           return {
             title: b.title,
             stopName: b.stopId,
-            walkMinutes: mode === "rail" ? 6 : mode === "tram" ? 10 : 3,
+            walkMinutes: b.walk === false ? undefined : mode === "rail" ? 6 : mode === "tram" ? 10 : 3,
             notices:
               mode === "tram"
                 ? ["Linje 13: Buss for trikk direkte mellom Thune og Furulund - Lilleaker", "Linje 13: Buss for trikk mellom Thune og Lilleaker"]
@@ -185,6 +185,18 @@ export function demoData(slide: Slide): unknown {
           { road: "E6", type: "Ulykke", text: "E6 Klemetsrud, retning sør: Trafikkulykke, vis hensyn.", updated: iso(-15) },
         ],
       };
+    case "buyprices": {
+      const it = (name: string, price: number, unit: string) => ({ name, price, unit });
+      return {
+        groups: [
+          { title: "Gull", unit: "g", items: [it("Fintgullbarre Sirkulert", 1081, "g"), it("Gull 999 - 24K", 1005, "g"), it("Gull 916 - 22K", 790, "g"), it("Gull 750 - 18K", 647, "g"), it("Gull 585 - 14K", 513, "g"), it("Gull 10K", 353, "g"), it("Gull 375 - 9K", 327, "g"), it("Gull 333 - 8K", 290, "g")] },
+          { title: "Sølv", unit: "kg", items: [it("Sirkulert Fintsølvbarre", 12212, "kg"), it("999 Fintsølv", 8014, "kg"), it("925 Sølv", 7413, "kg"), it("830 Sølv", 6652, "kg")] },
+          { title: "Mynter og barrer", unit: "stk", items: [it("1 oz Sirkulert Viking Eric Bloodaxe Gullmynt", 34133, "stk"), it("1 oz Sirkulert Viking Harald Hårfagre Gullmynt", 34133, "stk"), it("1 oz Sirkulert Maple Leaf Gullmynt", 33960, "stk"), it("1/2 oz Sirkulert Maple Leaf Gullmynt", 16980, "stk"), it("1/2 oz Sirkulert Alt For Norge Gullmynt", 16460, "stk"), it("1 kg Sirk. Viking Eric Bloodaxe Sølv Myntbarre", 12530, "stk"), it("Sirkulert Britisk Sovereign Gullmynt", 7750, "stk"), it("1/10 oz Sirkulert American Eagle Gullmynt", 3396, "stk"), it("250 g Sirkulert St. Helena East India Comp", 3117, "stk"), it("2 oz Sirkulert Tudor Beasts Yale Of Beauf Sølvmynt", 776, "stk"), it("1 oz Sirkulert Maple Leaf Sølvmynt", 388, "stk")] },
+        ],
+        updated: "25/11 kl 08:08 GMT",
+        fetchedAt: iso(-3),
+      };
+    }
     default:
       return null;
   }

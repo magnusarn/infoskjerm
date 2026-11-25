@@ -11,6 +11,7 @@ import { getMeta } from "@/lib/sources/meta";
 import { getMarkets } from "@/lib/sources/markets";
 import { getSki } from "@/lib/sources/ski";
 import { getTraffic } from "@/lib/sources/traffic";
+import { getBuyPrices } from "@/lib/sources/buyprices";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,8 @@ export async function GET(req: NextRequest) {
           return getMeta();
         case "markets":
           return getMarkets();
+        case "buyprices":
+          return getBuyPrices(slide);
         case "traffic":
           return getTraffic(slide);
         case "ski":

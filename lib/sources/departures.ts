@@ -50,7 +50,7 @@ async function getBoard(board: Board, walkFrom?: { lat: number; lon: number }): 
     if (result.departures.length) break;
   }
   const { _coords, _id, ...data } = result!;
-  if (walkFrom && _coords && _id) data.walkMinutes = await walkMinutes(walkFrom, _id, _coords);
+  if (walkFrom && board.walk !== false && _coords && _id) data.walkMinutes = await walkMinutes(walkFrom, _id, _coords);
   return data;
 }
 
