@@ -131,6 +131,22 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .board-col.stacked .board-head { padding-bottom: 10px; }
 .board-col.stacked .notice { margin: 8px 0 10px; padding: 10px 16px; }
 .board-col.stacked .notice > span:last-child { -webkit-line-clamp: 1; }
+.board-col.stacked .board-head { margin-bottom: 0; }
+.board-col.stacked .board-title { font-size: 32px; }
+.board-col.stacked .board-stop { font-size: 22px; }
+.board-col.stacked .walk { padding: 4px 12px; }
+.board-col.stacked .walk-min { font-size: 30px; }
+.board-col.stacked .board.compact .dep { flex: 0 0 52px; min-height: 52px; max-height: 52px; font-size: 32px; grid-template-columns: 110px 1fr auto; }
+.board-col.stacked .dep-rows { flex: 0 0 auto; }
+.board-col.stacked .when { flex-direction: row; align-items: baseline; gap: 8px; }
+.board-col.stacked .board.compact .line { font-size: 26px; padding: 0 10px; }
+.board-col.stacked .when small { font-size: 18px; }
+.board-col.stacked .trip { padding: 8px 0 6px; }
+.board-col.stacked .trip-dep, .board-col.stacked .trip-arr { font-size: 40px; }
+.board-col.stacked .trip-in { font-size: 26px; }
+.board-col.stacked .trip-meta { font-size: 21px; margin-top: 2px; }
+.board-col.stacked .board.compact .trip-line { font-size: 20px; padding: 0 10px; }
+.board-col.stacked .trip-next { font-size: 22px; padding: 6px 0 2px; }
 .board.compact { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .dep-rows { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .board.compact { padding: 24px 30px 12px; }

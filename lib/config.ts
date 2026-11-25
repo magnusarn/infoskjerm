@@ -21,11 +21,11 @@ const SENTRUM = ["Nationaltheatret", "Oslo S", "Jernbanetorget"];
 const AVGANGER = {
   type: "departures" as const,
   title: "Avganger i nærheten",
-  // Kolonner: tog | Hamar-boks + trikk | buss
-  columns: [[0], [3, 1], [2]],
+  // Kolonner: tog mot sentrum + neste tog til Hamar | trikk | buss
+  columns: [[0, 3], [1], [2]],
   walkFrom: { lat: 59.926763, lon: 10.6768 }, // Hovfaret 17 A
   boards: [
-    { title: "Tog mot sentrum", stopId: "NSR:StopPlace:59651", modes: ["rail" as const], towards: SENTRUM, max: 8 },
+    { title: "Tog mot sentrum", stopId: "NSR:StopPlace:59651", modes: ["rail" as const], towards: SENTRUM, max: 5 },
     // Trikken er erstattet av buss 13B/13E mellom Thune og Lilleaker til januar 2027 – da brukes Thune automatisk
     {
       title: "Trikk mot sentrum",
@@ -33,7 +33,7 @@ const AVGANGER = {
       fallbackStopIds: ["NSR:StopPlace:58287", "NSR:StopPlace:58288"], // Skøyen, Thune
       modes: ["tram" as const],
       towards: SENTRUM,
-      max: 2,
+      max: 5,
     },
     { title: "Buss", stopId: "NSR:StopPlace:58286", modes: ["bus" as const], max: 6 },
     {
