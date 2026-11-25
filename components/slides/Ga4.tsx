@@ -53,11 +53,11 @@ export default function Ga4View({ d, title }: { d: D; title: string }) {
         </section>
         <section className="card">
           <div className="label">Mest besøkte sider</div>
-          <BarList rows={d.topPages.map((p) => ({ name: p.path, value: p.views }))} format={compact} />
+          <BarList rows={d.topPages.slice(0, 4).map((p) => ({ name: p.path, value: p.views }))} format={compact} />
         </section>
         <section className="card">
           <div className="label">Kanaler (økter)</div>
-          <BarList rows={d.channels.slice(0, 5).map((c) => ({ name: CHANNEL_NB[c.name] ?? c.name, value: c.sessions }))} format={(n) => nf(n)} />
+          <BarList rows={d.channels.slice(0, 4).map((c) => ({ name: CHANNEL_NB[c.name] ?? c.name, value: c.sessions }))} format={(n) => nf(n)} />
         </section>
       </div>
     </div>
