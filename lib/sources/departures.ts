@@ -13,8 +13,27 @@ export type Departure = {
   cancelled: boolean;
   platform?: string;
 };
-export type BoardData = { title: string; stopName: string; departures: Departure[]; notices: string[]; walkMinutes?: number };
-export type DeparturesData = { title?: string; boards: BoardData[] };
+export type TripOption = {
+  start: string;
+  aimedStart: string;
+  end: string;
+  minutes: number;
+  lines: string[];
+  changes: number;
+  via?: string;
+  platform?: string;
+  realtime: boolean;
+};
+export type BoardData = {
+  title: string;
+  stopName: string;
+  departures: Departure[];
+  notices: string[];
+  walkMinutes?: number;
+  trips?: TripOption[];
+  toName?: string;
+};
+export type DeparturesData = { title?: string; boards: BoardData[]; columns?: number[][] };
 
 function query(board: Board, stopId: string) {
   const modes = board.modes?.length ? `, whiteListedModes: [${board.modes.join(", ")}]` : "";
@@ -42,7 +61,58 @@ function query(board: Board, stopId: string) {
   }`;
 }
 
+/** Reiseboks: de neste reisene fra board.stopId til board.trip.toStopId (med bytter) */
+async function getTripBoard(board: Board, walkFrom?: { lat: number; lon: number }): Promise<BoardData> {
+  const t = board.trip!;
+  const modes = board.modes?.length ? board.modes.map((m) => `{ transportMode: ${m} }`).join(", ") : "";
+  const query = `{
+    stopPlace(id: "${board.stopId}") { name latitude longitude }
+    trip(from: { place: "${board.stopId}" }, to: { place: "${t.toStopId}" }, numTripPatterns: ${(t.count ?? 2) + 2},
+         searchWindow: 300, modes: { accessMode: foot, egressMode: foot${modes ? `, transportModes: [${modes}]` : ""} }) {
+      tripPatterns {
+        expectedStartTime aimedStartTime expectedEndTime duration
+        legs { mode realtime line { publicCode } fromPlace { name quay { publicCode } } toPlace { name } }
+      }
+    }
+  }`;
+  const res = await fetch("https://api.entur.io/journey-planner/v3/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "ET-Client-Name": CLIENT },
+    body: JSON.stringify({ query }),
+    next: { revalidate: 30 },
+  });
+  if (!res.ok) throw new Error(`Entur svarte ${res.status}`);
+  const json = await res.json();
+  if (json.errors?.length) throw new Error(`Entur: ${json.errors[0].message}`);
+  const sp = json.data?.stopPlace;
+  const now = Date.now();
+  const trips: TripOption[] = (json.data?.trip?.tripPatterns ?? [])
+    .map((p: any) => {
+      const ride = p.legs.filter((l: any) => l.mode !== "foot");
+      return {
+        start: ride[0]?.expectedStartTime ?? p.expectedStartTime,
+        aimedStart: p.aimedStartTime,
+        end: p.expectedEndTime,
+        minutes: Math.round(p.duration / 60),
+        lines: ride.map((l: any) => l.line?.publicCode).filter(Boolean),
+        changes: Math.max(0, ride.length - 1),
+        via: ride.length > 1 ? ride[0].toPlace?.name : undefined,
+        platform: ride[0]?.fromPlace?.quay?.publicCode || undefined,
+        realtime: ride.every((l: any) => l.realtime),
+      };
+    })
+    .filter((x: TripOption) => new Date(x.start).getTime() > now - 30_000)
+    .slice(0, t.count ?? 2);
+
+  const data: BoardData = { title: board.title, stopName: sp?.name ?? "", departures: [], notices: [], trips, toName: t.toName };
+  if (walkFrom && board.walk !== false && sp?.latitude) {
+    data.walkMinutes = await walkMinutes(walkFrom, board.stopId, { lat: sp.latitude, lon: sp.longitude });
+  }
+  return data;
+}
+
 async function getBoard(board: Board, walkFrom?: { lat: number; lon: number }): Promise<BoardData> {
+  if (board.trip) return getTripBoard(board, walkFrom);
   const ids = [board.stopId, ...(board.fallbackStopIds ?? [])];
   let result: (BoardData & { _coords?: { lat: number; lon: number }; _id?: string }) | undefined;
   for (const id of ids) {
@@ -135,5 +205,5 @@ function pickLang(list?: { value: string; language?: string }[]) {
 }
 
 export async function getDepartures(s: DeparturesSlide): Promise<DeparturesData> {
-  return { title: s.title, boards: await Promise.all(s.boards.map((b) => getBoard(b, s.walkFrom))) };
+  return { title: s.title, columns: s.columns, boards: await Promise.all(s.boards.map((b) => getBoard(b, s.walkFrom))) };
 }

@@ -15,11 +15,15 @@ export type Board = {
   max?: number;
   /** Sett til false for å skjule gangtid (f.eks. en stasjon som ligger langt unna) */
   walk?: boolean;
+  /** Gjør tavla til en reiseboks: neste reiser fra stopId til denne holdeplassen (f.eks. «Neste tog til Hamar») */
+  trip?: { toStopId: string; toName: string; count?: number };
 };
 export type DeparturesSlide = Base & {
   type: "departures";
   title?: string;
   boards: Board[];
+  /** Valgfri plassering: hvilke tavler (indekser i boards) som står i hver kolonne, stablet ovenfra */
+  columns?: number[][];
   /** Startpunkt for gangtid til holdeplassene (kontoret) */
   walkFrom?: { lat: number; lon: number };
 };

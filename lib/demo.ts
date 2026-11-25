@@ -30,14 +30,28 @@ export function demoData(slide: Slide): unknown {
     case "departures":
       return {
         title: slide.title,
+        columns: slide.columns,
         boards: slide.boards.map((b) => {
+          if (b.trip)
+            return {
+              title: b.title,
+              stopName: "Skøyen stasjon",
+              departures: [],
+              notices: [],
+              walkMinutes: 9,
+              toName: b.trip.toName,
+              trips: [
+                { start: iso(14), aimedStart: iso(14), end: iso(96), minutes: 82, lines: ["RE10"], changes: 0, platform: "4", realtime: true },
+                { start: iso(74), aimedStart: iso(74), end: iso(154), minutes: 80, lines: ["L2", "R10"], changes: 1, via: "Oslo S", platform: "3", realtime: false },
+              ],
+            };
           const mode = b.modes?.[0] ?? "bus";
           const rows: [string, string][] =
             mode === "rail"
-              ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE11", "Skien"], ["L1", "Lillestrøm"]]
+              ? [["L1", "Lillestrøm"], ["R13", "Dal"], ["L2", "Ski"], ["RE10", "Lillehammer"], ["L1", "Lillestrøm"], ["FLY2", "Oslo lufthavn"], ["R14", "Kongsvinger"], ["L2", "Ski"]]
               : mode === "tram"
                 ? [["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"], ["13", "Ljabru"]]
-                : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"]];
+                : [["31", "Snarøya"], ["31", "Tonsenhagen"], ["20", "Skøyen"], ["31", "Snarøya"], ["20", "Galgeberg"], ["40", "Øvre Sogn"]];
           return {
             title: b.title,
             stopName: b.stopId,
@@ -52,8 +66,8 @@ export function demoData(slide: Slide): unknown {
               line,
               mode,
               destination,
-              aimed: iso(2 + i * 5),
-              expected: iso(2 + i * 5 + (i === 1 ? 2 : 0)),
+              aimed: iso(2 + i * 4),
+              expected: iso(2 + i * 4 + (i === 1 ? 2 : 0)),
               realtime: i !== 4,
               cancelled: false,
               platform: String((i % 2) + 1),
