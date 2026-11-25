@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SCREENS } from "@/lib/config";
-import { hasAccess } from "@/lib/auth";
+import { clientIp, hasAccess } from "@/lib/auth";
 import { demoData } from "@/lib/demo";
 import { getWeather } from "@/lib/sources/weather";
 import { getDepartures } from "@/lib/sources/departures";
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const screen = SCREENS[q.get("screen") ?? ""];
   const slide = screen?.slides[Number(q.get("i"))];
   if (!screen || !slide) return NextResponse.json({ error: "Ukjent skjerm eller slide" }, { status: 404 });
-  if (!hasAccess(screen, q.get("key"))) return NextResponse.json({ error: "Mangler gyldig nøkkel" }, { status: 401 });
+  if (!hasAccess(screen, q.get("key"), clientIp(req.headers))) return NextResponse.json({ error: "Ingen tilgang" }, { status: 401 });
 
   if (q.get("demo") === "1" || process.env.DEMO === "1") return NextResponse.json(demoData(slide));
 

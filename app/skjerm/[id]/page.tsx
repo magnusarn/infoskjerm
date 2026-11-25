@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SCREENS } from "@/lib/config";
-import { hasAccess, isProtected } from "@/lib/auth";
+import { headers } from "next/headers";
+import { clientIp, hasAccess, isProtected } from "@/lib/auth";
 import type { Slide } from "@/lib/types";
 import Player from "@/components/Player";
 
@@ -29,11 +30,11 @@ export default async function ScreenPage({
   const screen = SCREENS[id];
   if (!screen) notFound();
 
-  if (!hasAccess(screen, sp.key)) {
+  if (!hasAccess(screen, sp.key, clientIp(await headers()))) {
     return (
       <main className="locked">
         <h1>Denne skjermen er låst</h1>
-        <p>Legg til ?key=… i adressen.</p>
+        <p>Mangler gyldig nøkkel, eller skjermen åpnes fra et nettverk som ikke har tilgang.</p>
       </main>
     );
   }
