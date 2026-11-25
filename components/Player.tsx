@@ -103,13 +103,46 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
   }, [cache, index]);
 
   // ── Rotasjon ──
+  // Har noen klikket på en prikk, blir sliden stående i minst 60 sek før rotasjonen fortsetter
+  const [holdUntil, setHoldUntil] = useState(0);
   useEffect(() => {
     if (only !== undefined || visible.length < 2) return;
     const next = visible.find((i) => i > index) ?? visible[0];
-    const t = setTimeout(() => setIndex(next), slides[index].seconds * 1000);
+    const wait = Math.max(slides[index].seconds * 1000, holdUntil - Date.now());
+    const t = setTimeout(() => setIndex(next), wait);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, slides, only, visible.join(",")]);
+  }, [index, slides, only, visible.join(","), holdUntil]);
+
+  const goTo = useCallback((i: number) => {
+    setIndex(i);
+    setHoldUntil(Date.now() + 60_000);
+  }, []);
+
+  // Piltaster bytter slide (nyttig med tastatur eller fjernkontroll)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const pos = visible.indexOf(index);
+      const step = e.key === "ArrowRight" ? 1 : -1;
+      goTo(visible[(pos + step + visible.length) % visible.length]);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [visible, index, goTo]);
+
+  // Vis musepekeren bare når musen beveges (skjult på TV-en ellers)
+  const [pointer, setPointer] = useState(false);
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const onMove = () => {
+      setPointer(true);
+      clearTimeout(t);
+      t = setTimeout(() => setPointer(false), 3000);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => (window.removeEventListener("mousemove", onMove), clearTimeout(t));
+  }, []);
 
   // ── Last siden på nytt ved ny deploy, og uansett hver 6. time ──
   useEffect(() => {
@@ -146,7 +179,7 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
   const fullBleed = slide.type === "youtube" || slide.type === "image";
 
   return (
-    <div className="viewport">
+    <div className={pointer ? "viewport pointer" : "viewport"}>
       <div className="stage" ref={stageRef}>
         {!fullBleed && (
           <header className="topbar">
@@ -162,7 +195,14 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
         <footer className={fullBleed ? "bottombar overlay" : "bottombar"}>
           <div className="dots">
             {visible.map((i) => (
-              <span key={i} className={i === index ? "dot on" : "dot"} />
+              <button
+                key={i}
+                type="button"
+                className={i === index ? "dot on" : "dot"}
+                onClick={() => goTo(i)}
+                title={slideName(slides[i])}
+                aria-label={`Vis ${slideName(slides[i])}`}
+              />
             ))}
           </div>
           <div className="meta">
@@ -179,6 +219,11 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
       </div>
     </div>
   );
+}
+
+function slideName(s: Slide) {
+  if ("title" in s && s.title) return s.title;
+  return { weather: "Været", departures: "Avganger", youtube: "Video", image: "Bilde", message: "Melding" }[s.type as string] ?? s.type;
 }
 
 function SlideView({ slide, entry, active }: { slide: Slide; entry?: Entry; active: boolean }) {

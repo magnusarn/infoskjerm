@@ -55,8 +55,12 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 
 .bottombar { height: 88px; padding: 0 72px; display: flex; align-items: center; justify-content: space-between; position: relative; }
 .bottombar.overlay { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
-.dots { display: flex; gap: 14px; }
-.dot { width: 14px; height: 14px; border-radius: 50%; background: var(--line); }
+.dots { display: flex; gap: 20px; position: relative; z-index: 5; }
+.dot { width: 18px; height: 18px; border-radius: 50%; background: rgba(254, 249, 243, 0.18); border: 0; padding: 0; cursor: pointer;
+  outline: 10px solid transparent; /* større klikkflate */ transition: transform .15s, background .15s; }
+.dot:hover { background: var(--goldline); transform: scale(1.3); }
+.viewport.pointer, .viewport.pointer * { cursor: auto; }
+.viewport.pointer .dot { cursor: pointer; }
 .dot.on { background: var(--gold); }
 .bottombar .meta { display: flex; gap: 24px; align-items: center; font-size: 22px; color: var(--muted); }
 .warn { color: var(--offwhite); background: var(--red); padding: 4px 14px; border-radius: 999px; font-weight: 600; }

@@ -29,7 +29,10 @@ async function getTrips(s: TrafficSlide, key: string): Promise<Trip[]> {
       return {
         name: d.name,
         minutes: min(sum.travelTimeInSeconds),
-        normalMinutes: min(sum.noTrafficTravelTimeInSeconds ?? sum.travelTimeInSeconds - (sum.trafficDelayInSeconds ?? 0)),
+        // «Normalt» = vanlig reisetid på dette tidspunktet (historisk trafikk), ikke tom vei
+        normalMinutes: min(
+          sum.historicTrafficTravelTimeInSeconds ?? sum.noTrafficTravelTimeInSeconds ?? sum.travelTimeInSeconds - (sum.trafficDelayInSeconds ?? 0)
+        ),
         delayMinutes: min(sum.trafficDelayInSeconds ?? 0),
         km: Math.round(sum.lengthInMeters / 100) / 10,
       };
