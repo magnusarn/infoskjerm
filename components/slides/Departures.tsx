@@ -77,12 +77,21 @@ function BoardView({ b, compact }: { b: BoardData; compact: boolean }) {
           </div>
         );
       })}
-      {b.notices?.map((n, i) => (
-        <div className="notice" key={`n${i}`}>
+      {/* Plass til én melding per tavle – flere vises som et antall */}
+      {b.notices?.length > 0 && (
+        <div className="notice">
           <span className="notice-icon">!</span>
-          <span>{n}</span>
+          <span>
+            {b.notices[0]}
+            {b.notices.length > 1 && (
+              <em className="notice-more">
+                {" "}
+                · +{b.notices.length - 1} melding{b.notices.length > 2 ? "er" : ""} til
+              </em>
+            )}
+          </span>
         </div>
-      ))}
+      )}
     </section>
   );
 }

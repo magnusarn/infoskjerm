@@ -53,6 +53,17 @@ export type SkiSlide = Base & {
   utm: { x: number; y: number };
   webcam?: { url: string; label: string; credit: string };
 };
+/** Vei og trafikk: reisetid med trafikk (TomTom) og trafikkmeldinger (Statens vegvesen DATEX) */
+export type TrafficSlide = Base & {
+  type: "traffic";
+  title: string;
+  from: { lat: number; lon: number };
+  destinations: { name: string; lat: number; lon: number }[];
+  /** Veier vi viser meldinger for, med mønster som matcher vegnummer/navn i meldingene */
+  roads: { label: string; match: string }[];
+  /** Område meldingene må ligge innenfor: [minLat, minLon, maxLat, maxLon] */
+  bbox: [number, number, number, number];
+};
 export type MarketsSlide = Base & { type: "markets"; title: string };
 export type MessageSlide = Base & { type: "message"; heading: string; text?: string };
 
@@ -68,12 +79,13 @@ export type Slide =
   | ImageSlide
   | MessageSlide
   | MarketsSlide
-  | SkiSlide;
+  | SkiSlide
+  | TrafficSlide;
 
 export type Screen = { name: string; private: boolean; slides: Slide[] };
 
 /** Slide-typer som henter data fra /api/data */
-export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski"] as const;
+export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski", "traffic"] as const;
 
 /** Hvor ofte (sekunder) data for hver type hentes på nytt i nettleseren */
 export const REFRESH: Record<string, number> = {
@@ -85,4 +97,5 @@ export const REFRESH: Record<string, number> = {
   meta: 30 * 60,
   markets: 2 * 60,
   ski: 10 * 60,
+  traffic: 5 * 60,
 };

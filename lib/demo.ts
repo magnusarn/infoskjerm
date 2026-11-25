@@ -42,7 +42,12 @@ export function demoData(slide: Slide): unknown {
             title: b.title,
             stopName: b.stopId,
             walkMinutes: mode === "rail" ? 6 : mode === "tram" ? 10 : 3,
-            notices: mode === "tram" ? ["Buss erstatter trikken mellom Thune og Lilleaker fram til januar 2027."] : [],
+            notices:
+              mode === "tram"
+                ? ["Linje 13: Buss for trikk direkte mellom Thune og Furulund - Lilleaker", "Linje 13: Buss for trikk mellom Thune og Lilleaker"]
+                : mode === "bus"
+                  ? ["Holdeplass Ullern retning Lilleaker er flyttet cirka 50 meter bakover på grunn av vegarbeid i området fram til mars"]
+                  : ["Færre vogner", "Innstilte avganger mellom Asker og Lysaker"],
             departures: rows.slice(0, b.max ?? 8).map(([line, destination], i) => ({
               line,
               mode,
@@ -164,7 +169,21 @@ export function demoData(slide: Slide): unknown {
           hours: [],
           days: [1, 2, 3].map((n, i) => ({ date: day(n), min: -9 + i, max: -4 + i, symbol: ["clearsky_day", "lightsnow", "cloudy"][i], precip: [0, 1.4, 0][i] })),
         },
-        webcam: slide.webcam && { src: `/api/webcam?screen=kontor-1&i=4`, label: slide.webcam.label, credit: slide.webcam.credit, takenAt: iso(-8) },
+        webcam: slide.webcam && { src: slide.webcam.url, label: slide.webcam.label, credit: slide.webcam.credit, takenAt: iso(-8) },
+      };
+    case "traffic":
+      return {
+        trips: [
+          { name: "Helsfyr", minutes: 17, normalMinutes: 13, delayMinutes: 4, km: 11.2 },
+          { name: "Lørenskog", minutes: 24, normalMinutes: 20, delayMinutes: 4, km: 20.1 },
+          { name: "Ski", minutes: 29, normalMinutes: 27, delayMinutes: 2, km: 31.5 },
+          { name: "Drammen", minutes: 49, normalMinutes: 35, delayMinutes: 14, km: 37.8 },
+        ],
+        messages: [
+          { road: "E18", type: "Kø", text: "E18 Lysaker – Sandvika, retning Drammen: Kø på grunn av stor trafikk.", updated: iso(-6) },
+          { road: "Ring 3", type: "Vegarbeid", text: "Rv150 Ring 3 Ullevål – Tåsen: Ett felt stengt i retning Ryen på grunn av vegarbeid.", updated: iso(-48) },
+          { road: "E6", type: "Ulykke", text: "E6 Klemetsrud, retning sør: Trafikkulykke, vis hensyn.", updated: iso(-15) },
+        ],
       };
     default:
       return null;

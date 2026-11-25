@@ -138,6 +138,7 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .notice { display: flex; gap: 14px; align-items: flex-start; margin: 12px 0 14px; padding: 14px 18px; border-radius: 12px;
   background: rgba(168, 72, 61, 0.16); border-left: 5px solid var(--red); font-size: 25px; line-height: 1.3; color: var(--offwhite); }
 .notice > span:last-child { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.notice-more { font-style: normal; color: var(--goldline); white-space: nowrap; }
 .notice-icon { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%;
   background: var(--red); color: var(--offwhite); font-weight: 700; font-size: 21px; }
 /* ── Kalender ── */
@@ -226,6 +227,30 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .ski-day .t { font-size: 32px; font-weight: 600; }
 .ski-day .min { font-size: 24px; color: var(--muted); font-weight: 400; }
 .ski-day .s { font-size: 22px; color: var(--teal); margin-top: 4px; }
+
+/* ── Vei og trafikk ── */
+.traffic { height: 100%; display: flex; flex-direction: column; }
+.traffic .title { margin-bottom: 26px; }
+.tr-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1.1fr; gap: 28px; }
+.tr-grid.only-trips { grid-template-columns: 1fr; }
+.tr-trips { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 24px; }
+.tr-trip { padding: 24px 30px; border-left: 6px solid var(--teal); display: flex; flex-direction: column; justify-content: center; }
+.tr-trip.some { border-left-color: var(--gold); }
+.tr-trip.heavy { border-left-color: var(--red); }
+.tr-time { font-family: var(--serif); font-size: 88px; font-weight: 500; line-height: 1; }
+.tr-sub { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 24px; color: var(--muted); }
+.tr-delay { font-size: 28px; font-weight: 600; }
+.tr-delay.ok { color: var(--teal); }
+.tr-delay.some { color: var(--gold); }
+.tr-delay.heavy { color: var(--down); }
+.tr-msgs { padding: 26px 32px; overflow: hidden; }
+.tr-none { font-size: 32px; color: var(--muted); margin-top: 20px; }
+.tr-msg { display: grid; grid-template-columns: 120px 1fr; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.tr-msg:last-child { border-bottom: 0; }
+.tr-road { align-self: start; text-align: center; font-weight: 700; font-size: 26px; padding: 6px 8px; border-radius: 8px; background: var(--goldline); color: var(--charcoal); }
+.tr-msg-type { font-size: 22px; color: var(--gold); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+.tr-msg-type span { color: var(--muted); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.tr-msg-text { font-size: 28px; line-height: 1.3; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* ── Dashboards (GA4/Meta) ── */
 .dash { height: 100%; display: flex; flex-direction: column; }

@@ -53,8 +53,25 @@ export const SCREENS: Record<string, Screen> = {
     slides: [
       { type: "weather", seconds: 20, ...VAER },
       { ...AVGANGER, seconds: 25 },
+      {
+        type: "traffic",
+        seconds: 25,
+        title: "Vei og trafikk",
+        from: { lat: 59.926763, lon: 10.6768 }, // Hovfaret 17 A
+        destinations: [
+          { name: "Helsfyr", lat: 59.9128, lon: 10.8008 },
+          { name: "Lørenskog", lat: 59.9285, lon: 10.958 },
+          { name: "Ski", lat: 59.7194, lon: 10.8357 },
+          { name: "Drammen", lat: 59.74, lon: 10.204 },
+        ],
+        roads: [
+          { label: "Ring 3", match: "ring ?3|\\b(rv|riksveg|riksvei) ?150\\b|(^|\\D)150(\\D|$)" },
+          { label: "E18", match: "e ?18\\b|(^|\\D)18(\\D|$)" },
+          { label: "E6", match: "e ?6\\b|(^|\\D)6(\\D|$)" },
+        ],
+        bbox: [59.7, 10.2, 60.0, 11.0], // Oslo, Bærum, Asker, Lillestrøm og Follo
+      },
       { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
-      { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
       {
         type: "ski",
         seconds: 25,
@@ -90,6 +107,7 @@ export const SCREENS: Record<string, Screen> = {
           note: "Kun bestillinger sporet i GA4 – faktisk antall er høyere",
         },
       },
+      { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
       { type: "meta", seconds: 25, title: "Meta-annonser – siste 7 dager" },
       { type: "iframe", seconds: 30, title: "Power BI", urlEnv: "POWERBI_EMBED_URL" },
     ],
