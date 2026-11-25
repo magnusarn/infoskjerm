@@ -14,7 +14,13 @@ export type Board = {
   towards?: string[];
   max?: number;
 };
-export type DeparturesSlide = Base & { type: "departures"; title?: string; boards: Board[] };
+export type DeparturesSlide = Base & {
+  type: "departures";
+  title?: string;
+  boards: Board[];
+  /** Startpunkt for gangtid til holdeplassene (kontoret) */
+  walkFrom?: { lat: number; lon: number };
+};
 export type CalendarSlide = Base & { type: "calendar"; title: string; days?: number };
 /** Én nyhetskilde. `urls` prøves i rekkefølge – første som svarer brukes. */
 export type Feed = { name: string; urls: string[] };

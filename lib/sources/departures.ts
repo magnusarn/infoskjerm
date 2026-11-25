@@ -13,7 +13,7 @@ export type Departure = {
   cancelled: boolean;
   platform?: string;
 };
-export type BoardData = { title: string; stopName: string; departures: Departure[]; notices: string[] };
+export type BoardData = { title: string; stopName: string; departures: Departure[]; notices: string[]; walkMinutes?: number };
 export type DeparturesData = { title?: string; boards: BoardData[] };
 
 function query(board: Board, stopId: string) {
@@ -24,6 +24,8 @@ function query(board: Board, stopId: string) {
   return `{
     stopPlace(id: "${stopId}") {
       name
+      latitude
+      longitude
       situations { id summary { value language } description { value language } }
       estimatedCalls(numberOfDepartures: ${n}, timeRange: 14400${modes}) {
         realtime
@@ -40,17 +42,43 @@ function query(board: Board, stopId: string) {
   }`;
 }
 
-async function getBoard(board: Board): Promise<BoardData> {
+async function getBoard(board: Board, walkFrom?: { lat: number; lon: number }): Promise<BoardData> {
   const ids = [board.stopId, ...(board.fallbackStopIds ?? [])];
-  let result: BoardData | undefined;
+  let result: (BoardData & { _coords?: { lat: number; lon: number }; _id?: string }) | undefined;
   for (const id of ids) {
     result = await getBoardAt(board, id);
-    if (result.departures.length) return result;
+    if (result.departures.length) break;
   }
-  return result!;
+  const { _coords, _id, ...data } = result!;
+  if (walkFrom && _coords && _id) data.walkMinutes = await walkMinutes(walkFrom, _id, _coords);
+  return data;
 }
 
-async function getBoardAt(board: Board, stopId: string): Promise<BoardData> {
+/** Gangtid fra kontoret til holdeplassen: Enturs reiseplanlegger (til fots), ellers luftlinje × 1,3 i 4,8 km/t */
+async function walkMinutes(from: { lat: number; lon: number }, stopId: string, to: { lat: number; lon: number }) {
+  try {
+    const res = await fetch("https://api.entur.io/journey-planner/v3/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "ET-Client-Name": CLIENT },
+      body: JSON.stringify({
+        query: `{ trip(from: { coordinates: { latitude: ${from.lat}, longitude: ${from.lon} } }, to: { place: "${stopId}" },
+                   modes: { directMode: foot, transportModes: [] }, numTripPatterns: 1) { tripPatterns { duration } } }`,
+      }),
+      next: { revalidate: 86400 }, // gangtid endrer seg ikke – hent én gang i døgnet
+    });
+    const sec = (await res.json())?.data?.trip?.tripPatterns?.[0]?.duration;
+    if (typeof sec === "number" && sec > 0) return Math.max(1, Math.round(sec / 60));
+  } catch {}
+  const R = 6371000;
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const dLat = rad(to.lat - from.lat);
+  const dLon = rad(to.lon - from.lon);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(from.lat)) * Math.cos(rad(to.lat)) * Math.sin(dLon / 2) ** 2;
+  const meters = 2 * R * Math.asin(Math.sqrt(a)) * 1.3;
+  return Math.max(1, Math.round(meters / 80));
+}
+
+async function getBoardAt(board: Board, stopId: string): Promise<BoardData & { _coords?: { lat: number; lon: number }; _id?: string }> {
   const res = await fetch("https://api.entur.io/journey-planner/v3/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json", "ET-Client-Name": CLIENT },
@@ -82,6 +110,8 @@ async function getBoardAt(board: Board, stopId: string): Promise<BoardData> {
   }
 
   return {
+    _coords: sp.latitude ? { lat: sp.latitude, lon: sp.longitude } : undefined,
+    _id: stopId,
     title: board.title,
     stopName: sp.name,
     notices: notices.slice(0, 2),
@@ -105,5 +135,5 @@ function pickLang(list?: { value: string; language?: string }[]) {
 }
 
 export async function getDepartures(s: DeparturesSlide): Promise<DeparturesData> {
-  return { title: s.title, boards: await Promise.all(s.boards.map(getBoard)) };
+  return { title: s.title, boards: await Promise.all(s.boards.map((b) => getBoard(b, s.walkFrom))) };
 }

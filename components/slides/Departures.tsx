@@ -16,7 +16,7 @@ export default function DeparturesView({ d }: { d: DeparturesData }) {
   return (
     <div className="departures">
       <h1 className="title">{d.title ?? (many ? "Avganger" : `Avganger fra ${d.boards[0]?.stopName}`)}</h1>
-      <div className={many ? "boards" : ""} style={{ gridTemplateColumns: `repeat(${d.boards.length}, 1fr)` }}>
+      <div className={many ? "boards" : ""} style={{ gridTemplateColumns: `repeat(${d.boards.length}, minmax(0, 1fr))` }}>
         {d.boards.map((b, i) => (
           <BoardView key={i} b={b} compact={many} />
         ))}
@@ -28,16 +28,21 @@ export default function DeparturesView({ d }: { d: DeparturesData }) {
 function BoardView({ b, compact }: { b: BoardData; compact: boolean }) {
   const now = Date.now();
   const list = b.departures.filter((x) => new Date(x.expected).getTime() > now - 30_000);
-  const mode = b.departures[0]?.mode;
   return (
     <section className={compact ? "board card compact" : "board card"}>
       {compact && (
         <header className="board-head">
-          <span className="board-icon">{MODE_ICON[mode ?? ""] ?? "🚏"}</span>
           <div>
             <div className="board-title">{b.title}</div>
             <div className="board-stop">fra {b.stopName}</div>
           </div>
+          {b.walkMinutes !== undefined && (
+            <div className="walk" title="Gangtid fra kontoret">
+              <span className="walk-icon">🚶</span>
+              <span className="walk-min">{b.walkMinutes}</span>
+              <span className="walk-unit">min</span>
+            </div>
+          )}
         </header>
       )}
       {list.length === 0 && <div className="board-empty">Ingen avganger de neste timene</div>}
@@ -46,7 +51,16 @@ function BoardView({ b, compact }: { b: BoardData; compact: boolean }) {
         const late = Math.round((new Date(x.expected).getTime() - new Date(x.aimed).getTime()) / 60_000);
         const when = min <= 0 ? "Nå" : min < 15 ? `${min} min` : hhmm(x.expected);
         return (
-          <div className={x.cancelled ? "dep cancelled" : "dep"} key={i}>
+          <div
+            className={[
+              "dep",
+              x.cancelled && "cancelled",
+              b.walkMinutes !== undefined && min < b.walkMinutes && "unreachable",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            key={i}
+          >
             <span className={`line mode-${x.mode}`}>
               {!compact && <span className="mi">{MODE_ICON[x.mode] ?? "🚌"}</span>}
               {x.line}
