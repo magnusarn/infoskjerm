@@ -64,6 +64,8 @@ export const SCREENS: Record<string, Screen> = {
     name: "Skøyen",
     private: false,
     slides: [
+      { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
+      { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
       { type: "weather", seconds: 20, ...VAER },
       { ...AVGANGER, seconds: 25 },
       {
@@ -84,8 +86,6 @@ export const SCREENS: Record<string, Screen> = {
         ],
         bbox: [59.7, 10.2, 60.0, 11.0], // Oslo, Bærum, Asker, Lillestrøm og Follo
       },
-      { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
-      { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
       {
         type: "ski",
         seconds: 25,
@@ -131,10 +131,11 @@ export const SCREENS: Record<string, Screen> = {
     name: "Hamar",
     private: false,
     slides: [
+      { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
       { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
-      { type: "youtube", seconds: 90, videoId: "3gt7pYNpj-Y" },
       { type: "weather", seconds: 15, place: "Hamar", ...HAMAR },
       { ...AVGANGER_HAMAR, seconds: 20 },
+      { type: "youtube", seconds: 90, videoId: "3gt7pYNpj-Y" },
     ],
   },
 
