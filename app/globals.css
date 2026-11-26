@@ -221,6 +221,11 @@ body { -webkit-font-smoothing: antialiased; font-variant-numeric: lining-nums ta
 .mk-metals { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
 .mk-metal { padding: 24px 34px 16px; }
 .mk-price { font-family: var(--serif); font-size: 84px; font-weight: 500; line-height: 1.05; white-space: nowrap; }
+.mk-price-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.mk-usd { border-left: 1px solid var(--line); padding-left: 24px; display: flex; flex-direction: column; align-items: flex-end; white-space: nowrap; }
+.mk-usd-price { font-family: var(--serif); font-size: 50px; font-weight: 500; line-height: 1.1; }
+.mk-usd-price .mk-unit { font-size: 26px; }
+.mk-usd .mk-delta { font-size: 24px; }
 .mk-unit { font-family: var(--sans); font-size: 34px; color: var(--muted); font-weight: 400; }
 .mk-changes { display: flex; gap: 40px; margin: 10px 0 6px; }
 .mk-change { display: flex; flex-direction: column; }

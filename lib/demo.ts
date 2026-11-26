@@ -157,8 +157,8 @@ export function demoData(slide: Slide): unknown {
         Array.from({ length: n }, (_, i) => ({ date: day(i - n), price: start * (1 + Math.sin(i / 4) * 0.04 + i * 0.002) }));
       return {
         metals: [
-          { code: "XAU", name: "Gull", price: 1145.34, unit: "g", changeToday: 0.7, changeWeek: -4.85, history: hist(1100), fetchedAt: iso(-1) },
-          { code: "XAG", name: "Sølv", price: 13365, unit: "kg", changeToday: 0.03, changeWeek: -9.2, history: hist(13000), fetchedAt: iso(-1) },
+          { code: "XAU", name: "Gull", price: 1145.34, unit: "g", changeToday: 0.7, changeWeek: -4.85, history: hist(1100), usd: { price: 3574.64, changeToday: 1.3 }, fetchedAt: iso(-1) },
+          { code: "XAG", name: "Sølv", price: 13365, unit: "kg", changeToday: 0.03, changeWeek: -9.2, history: hist(13000), usd: { price: 41.69, changeToday: 3.5 }, fetchedAt: iso(-1) },
         ],
         fx: [
           { code: "USD", label: "1 USD", rate: 9.8076, date: day(-1), changeDay: 0.56, changeWeek: 1.1, kroneDay: -0.56, kroneWeek: -1.09, fetchedAt: iso(-20) },

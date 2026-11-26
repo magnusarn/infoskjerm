@@ -57,8 +57,22 @@ function MetalCard({ m }: { m: Metal }) {
   return (
     <section className="mk-metal card">
       <div className="label">{m.name}</div>
-      <div className="mk-price">
-        {nf(m.price, digits)} <span className="mk-unit">kr/{m.unit}</span>
+      <div className="mk-price-row">
+        <div className="mk-price">
+          {nf(m.price, digits)} <span className="mk-unit">kr/{m.unit}</span>
+        </div>
+        {m.usd && (
+          <div className="mk-usd">
+            <div className="mk-usd-price">
+              ${nf(m.usd.price, 2)} <span className="mk-unit">/oz</span>
+            </div>
+            {m.usd.changeToday !== null && (
+              <span className={m.usd.changeToday >= 0 ? "mk-delta up" : "mk-delta down"}>
+                {m.usd.changeToday >= 0 ? "▲" : "▼"} {nf(Math.abs(m.usd.changeToday), 2)} % i dag
+              </span>
+            )}
+          </div>
+        )}
       </div>
       <div className="mk-changes">
         <Change label="I dag" value={m.changeToday} />

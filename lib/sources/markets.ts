@@ -16,6 +16,8 @@ export type Metal = {
   changeToday: number | null; // prosent
   changeWeek: number | null; // prosent
   history: { date: string; price: number }[];
+  /** Internasjonal spotpris i USD per troy unse, med endring i dag (prosent) */
+  usd?: { price: number; changeToday: number | null };
   fetchedAt: string;
 };
 export type Fx = {
@@ -52,7 +54,9 @@ async function getMetals(): Promise<Metal[]> {
     fetch(`${KAR}/prices?from=${ymd(from)}&to=${ymd(to)}`, { next: { revalidate: 3600 } }),
   ]);
   if (!spotRes.ok) throw new Error(`Spotpris svarte ${spotRes.status}`);
-  const spot = JSON.parse((await spotRes.text()).trim()).primary;
+  const spotJson = JSON.parse((await spotRes.text()).trim());
+  const spot = spotJson.primary;
+  const swap = spotJson.swap ?? {};
   const spotAt = fetchedAt(spotRes);
   const hist: any[] = histRes.ok ? JSON.parse((await histRes.text()).trim()) : [];
 
@@ -62,6 +66,7 @@ async function getMetals(): Promise<Metal[]> {
   ];
   return defs.map((d) => {
     const s = spot[d.code];
+    const u = swap[d.code];
     const factor = s.unit === "kg" ? 1000 : 1;
     const series = (hist.find((h) => h.Code === d.hist)?.Prices ?? [])
       .filter((p: any) => p.Currency === "NOK")
@@ -77,6 +82,10 @@ async function getMetals(): Promise<Metal[]> {
       changeToday: typeof s.change === "number" ? s.change : null,
       changeWeek: pct(s.price, ref?.price),
       history: series.slice(-30),
+      usd:
+        u && u.currency === "USD" && u.unit === "oz" && typeof u.price === "number"
+          ? { price: u.price, changeToday: typeof u.change === "number" ? u.change : null }
+          : undefined,
       fetchedAt: spotAt,
     };
   });
