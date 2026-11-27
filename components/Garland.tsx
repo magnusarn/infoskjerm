@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
  * `fasten` sier hvor slyngen er festet med en granbar: "left", "right" eller "both".
  * Kanten uten granbar er «åpen» og fortsetter på nabo-TV-en.
  *
- * Vises bare i julesesongen (20. november – 6. januar).
+ * Vises bare i julesesongen (20. november – 1. januar).
  */
 export type Fasten = "left" | "right" | "both";
 
@@ -23,7 +23,7 @@ const COLORS = ["#f3d9a4", "#d0685a", "#a9d0d4", "#fff4e0"]; // gull, rød, blå
 export function isChristmasSeason(d = new Date()) {
   const m = d.getMonth() + 1;
   const day = d.getDate();
-  return (m === 11 && day >= 20) || m === 12 || (m === 1 && day <= 6);
+  return (m === 11 && day >= 20) || m === 12 || (m === 1 && day <= 1);
 }
 
 /** Punkt på bue nr. i ved t (0–1): kvadratisk Bézier fra (x0,Y0) via (x0+SWAG/2, Y0+2·SAG) til (x0+SWAG,Y0) */

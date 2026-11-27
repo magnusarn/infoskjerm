@@ -96,7 +96,7 @@ export type Screen = {
   private: boolean;
   slides: Slide[];
   /**
-   * Julelysslynge i toppen (vises 20. nov – 6. jan).
+   * Julelysslynge i toppen (vises 20. nov – 1. jan).
    * fasten: hvor slyngen er festet med granbar. Siden uten granbar fortsetter på TV-en ved siden av.
    * offset: lyspærenummeret slyngen starter på, så fargene fortsetter fra nabo-TV-en (24 per skjerm).
    */
