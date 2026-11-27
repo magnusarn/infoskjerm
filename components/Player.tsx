@@ -14,6 +14,8 @@ import SkiView from "./slides/Ski";
 import TrafficView from "./slides/Traffic";
 import BuyPricesView from "./slides/BuyPrices";
 import { IframeView, YoutubeView, ImageView, MessageView } from "./slides/Embeds";
+import Garland from "./Garland";
+import type { Screen } from "@/lib/types";
 
 type Props = {
   screenId: string;
@@ -23,6 +25,7 @@ type Props = {
   unprotected: boolean;
   /** ?slide=2 låser visningen til én slide (nyttig ved oppsett) */
   only?: number;
+  xmas?: Screen["xmas"];
 };
 
 type Entry = { data?: any; error?: string; at?: number };
@@ -39,7 +42,7 @@ const SOURCES: Record<string, string> = {
   ski: "Snø: NVE / seNorge (modellberegnet) · Vær og webkamera: MET Norway / Yr",
 };
 
-export default function Player({ screenId, name, slides, query, unprotected, only }: Props) {
+export default function Player({ screenId, name, slides, query, unprotected, only, xmas }: Props) {
   const [index, setIndex] = useState(only ?? 0);
   const [cache, setCache] = useState<Record<number, Entry>>({});
   const [online, setOnline] = useState(true);
@@ -183,6 +186,7 @@ export default function Player({ screenId, name, slides, query, unprotected, onl
   return (
     <div className={pointer ? "viewport pointer" : "viewport"}>
       <div className="stage" ref={stageRef}>
+        {xmas && !fullBleed && <Garland fasten={xmas.fasten} offset={xmas.offset} />}
         {!fullBleed && (
           <header className="topbar">
             <div className="brand">{name}</div>

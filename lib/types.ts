@@ -91,7 +91,17 @@ export type Slide =
   | TrafficSlide
   | BuyPricesSlide;
 
-export type Screen = { name: string; private: boolean; slides: Slide[] };
+export type Screen = {
+  name: string;
+  private: boolean;
+  slides: Slide[];
+  /**
+   * Julelysslynge i toppen (vises 20. nov – 6. jan).
+   * fasten: hvor slyngen er festet med granbar. Siden uten granbar fortsetter på TV-en ved siden av.
+   * offset: lyspærenummeret slyngen starter på, så fargene fortsetter fra nabo-TV-en (24 per skjerm).
+   */
+  xmas?: { fasten: "left" | "right" | "both"; offset?: number };
+};
 
 /** Slide-typer som henter data fra /api/data */
 export const DATA_TYPES = ["weather", "departures", "calendar", "news", "ga4", "meta", "markets", "ski", "traffic", "buyprices"] as const;

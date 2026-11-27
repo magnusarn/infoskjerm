@@ -71,6 +71,8 @@ export const SCREENS: Record<string, Screen> = {
   "kontor-1": {
     name: "Skøyen",
     private: false,
+    // Henger til høyre for Tall og trender: slyngen kommer inn fra venstre og festes i høyre hjørne
+    xmas: { fasten: "right", offset: 24 },
     slides: [
       { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
       { type: "news", seconds: 25, title: "Økonominytt", feeds: [E24, FINANSAVISEN] },
@@ -117,6 +119,8 @@ export const SCREENS: Record<string, Screen> = {
 
   "kontor-2": {
     name: "Tall og trender",
+    // Henger til venstre for Skøyen: festet i venstre hjørne, fortsetter ut til høyre
+    xmas: { fasten: "left" },
     // Interne tall: krever ?key=<SCREEN_KEY> i URL-en
     private: true,
     slides: [
@@ -141,6 +145,7 @@ export const SCREENS: Record<string, Screen> = {
   "resep-hamar": {
     name: "Hamar",
     private: false,
+    xmas: { fasten: "both" },
     slides: [
       { type: "markets", seconds: 25, title: "Metallpriser og valuta" },
       { type: "buyprices", seconds: 30, title: "I dag kjøper vi for", url: "https://karasmussen.com/metallpriser/" },
@@ -153,6 +158,7 @@ export const SCREENS: Record<string, Screen> = {
   publikum: {
     name: "Velkommen",
     private: false,
+    xmas: { fasten: "both" },
     slides: [
       { type: "youtube", seconds: 60, videoIdEnv: "YOUTUBE_VIDEO_ID" },
       { ...AVGANGER, seconds: 20 },

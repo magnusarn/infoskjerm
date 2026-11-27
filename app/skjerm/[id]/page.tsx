@@ -43,6 +43,7 @@ export default async function ScreenPage({
     <Player
       screenId={id}
       name={screen.name}
+      xmas={screen.xmas}
       slides={screen.slides.map(resolve)}
       query={{ key: sp.key, demo: sp.demo }}
       unprotected={screen.private && !isProtected()}
